@@ -3,10 +3,11 @@ import random
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from app.db.models import Answer, Group, Question, School, Survey
+from app.db.management.demo_seed import get_question_ids_by_prefix
+from app.db.management.commands.seed_demo_questions import seed_demo_questions
+from app.db.models import Answer, Group, Question, School
 
 
-QUESTION_COUNT = 122
 STUDENT_PREFIX_BY_EMSTYPE = {
     0: "A-SEC",
     1: "A-EMS",
@@ -74,6 +75,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         rng = random.Random(options["seed"])
 
+        seed_demo_questions()
+        question_ids_by_prefix, _ = get_question_ids_by_prefix()
+
         schools = list(School.objects.select_related("subsystem", "muni").order_by("school_key"))
         groups = list(Group.objects.select_related("school").order_by("school__school_key", "shift"))
 
@@ -82,59 +86,6 @@ class Command(BaseCommand):
         if not groups:
             raise CommandError("No groups found. Run seed_demo_schools first.")
 
-        surveys = {}
-        for survey_name, survey_type in SURVEY_DEFINITIONS:
-            survey, _ = Survey.objects.update_or_create(
-                survey_name=survey_name,
-                defaults={
-                    "number_1": "1",
-                    "number_2": str(QUESTION_COUNT),
-                    "type": survey_type,
-                },
-            )
-            surveys[survey_name] = survey
-
-        existing_questions = {
-            question.key: question
-            for question in Question.objects.select_related("survey").all()
-        }
-
-        # Ensure the teacher surveys exist and point D-EMS questions to the D-EMS survey.
-        d_ems_survey = surveys["D-EMS"]
-        for number in range(1, QUESTION_COUNT + 1):
-            key = f"D-EMS-{number}"
-            question = existing_questions.get(key)
-            if question and question.survey_id != d_ems_survey.id:
-                question.survey = d_ems_survey
-                question.save(update_fields=["survey"])
-
-        # Clone D-EMS into the missing teacher prefixes for demo compatibility.
-        cloned_questions = 0
-        for target_prefix in ["M-SEC", "D-ES"]:
-            target_survey = surveys[target_prefix]
-            for number in range(1, QUESTION_COUNT + 1):
-                source = existing_questions.get(f"D-EMS-{number}")
-                if not source:
-                    raise CommandError(
-                        "Missing D-EMS base questions; cannot clone teacher question set."
-                    )
-                target_key = f"{target_prefix}-{number}"
-                target, created = Question.objects.update_or_create(
-                    key=target_key,
-                    defaults={
-                        "survey": target_survey,
-                        "question": source.question,
-                        "option_a": source.option_a,
-                        "option_b": source.option_b,
-                        "option_c": source.option_c,
-                        "option_d": source.option_d,
-                        "option_e": source.option_e,
-                    },
-                )
-                existing_questions[target_key] = target
-                cloned_questions += int(created)
-
-        # Refresh all question objects after any cloning/repointing.
         question_map = {
             question.key: question
             for question in Question.objects.select_related("survey").all()
@@ -145,7 +96,7 @@ class Command(BaseCommand):
         student_questions = {
             prefix: [
                 question_map[f"{prefix}-{number}"]
-                for number in range(1, QUESTION_COUNT + 1)
+                for number in question_ids_by_prefix[prefix]
                 if f"{prefix}-{number}" in question_map
             ]
             for prefix in student_prefixes
@@ -153,7 +104,7 @@ class Command(BaseCommand):
         teacher_questions = {
             prefix: [
                 question_map[f"{prefix}-{number}"]
-                for number in range(1, QUESTION_COUNT + 1)
+                for number in question_ids_by_prefix[prefix]
                 if f"{prefix}-{number}" in question_map
             ]
             for prefix in teacher_prefixes
@@ -214,7 +165,6 @@ class Command(BaseCommand):
             self.style.SUCCESS(
                 (
                     f"Surveys verificados={len(SURVEY_DEFINITIONS)}. "
-                    f"Preguntas docentes clonadas={cloned_questions}. "
                     f"Answers demo creados={len(answers_to_create)}."
                 )
             )
