@@ -69,10 +69,8 @@ services:
     networks:
       - network
       - dssh_net
-    
-    expose:
-      - 8080
-      # - 443
+    ports:
+      - "127.0.0.1:${PUBLIC_HTTP_PORT:-8081}:8080"
     depends_on:
       - web
     links:

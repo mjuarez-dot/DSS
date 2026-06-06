@@ -1422,6 +1422,7 @@ class LoginView(View):
             user = authenticate(username=us, password=pw)
             if user is not None and user.is_active:
                 login(request, user)
+                ensure_userapp(user)
                 print("login succesful")
                 if "redirect" in request.POST:
                     return HttpResponseRedirect(request.POST["redirect"])
@@ -1504,9 +1505,14 @@ def init_user(user):
     return ctx
 
 
+def ensure_userapp(user):
+    userapp, _ = UserApp.objects.get_or_create(user=user)
+    return userapp
+
+
 class IntroView(View):
     def get(self, request, *args, **kwargs):
-        ctx = init_user(request.user.userapp)
+        ctx = init_user(ensure_userapp(request.user))
         ctx["location"] = "Introducción"
         ctx["location_name"] = "intro"
         return render(request, "dssh-intro.html", ctx)
@@ -1514,7 +1520,7 @@ class IntroView(View):
 
 class MapView(View):
     def get(self, request, *args, **kwargs):
-        ctx = init_user(request.user.userapp)
+        ctx = init_user(ensure_userapp(request.user))
         ctx["location"] = "Mapa"
         ctx["location_name"] = "map"
         ctx["map_levels"] = [
@@ -1528,7 +1534,7 @@ class MapView(View):
 
 class GlossaryView(View):
     def get(self, request, *args, **kwargs):
-        ctx = init_user(request.user.userapp)
+        ctx = init_user(ensure_userapp(request.user))
         ctx["location"] = "Glosario"
         ctx["location_name"] = "glossary"
         return render(request, "glosario.html", ctx)
@@ -2681,7 +2687,7 @@ class ReportView(View):
     def get(self, request, *args, **kwargs):
         # if not request.user.is_superuser:
         #     return HttpResponseRedirect(reverse_lazy('main'))
-        ctx = init_user(request.user.userapp)
+        ctx = init_user(ensure_userapp(request.user))
 
         is_school = False
         is_subsystem = False
@@ -2834,6 +2840,7 @@ class MainView(LoginRequiredMixin, View):
         else:
             ctx["msg"] = ""
         user = request.user
+        ensure_userapp(user)
         ctx["is_school"] = False
         ctx["is_school"] = False
         ctx["is_subsystem"] = False

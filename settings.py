@@ -94,6 +94,20 @@ WSGI_APPLICATION = 'wsgi.application'
 
 MAPBOX_TOKEN = LOCAL_MAPBOX_TOKEN
 
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+
+PUBLIC_DOMAIN = os.environ.get("PUBLIC_DOMAIN", "").strip()
+CSRF_TRUSTED_ORIGINS = [
+    origin
+    for origin in (
+        f"https://{PUBLIC_DOMAIN}" if PUBLIC_DOMAIN else "",
+        f"http://{PUBLIC_DOMAIN}" if PUBLIC_DOMAIN else "",
+        PUBLIC_BASE_URL,
+    )
+    if origin
+]
+
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
