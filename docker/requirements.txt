@@ -1,0 +1,12 @@
+Django==3.0
+celery==4.4.1
+redis==3.4.1
+django-cors-headers
+djangorestframework==3.12.4
+django-extensions==3.1.3
+django-import-export
+bpython==0.21
+gunicorn==20.1.0
+psycopg2-binary
+openpyxl
+weasyprint

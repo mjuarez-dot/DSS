@@ -1,0 +1,36 @@
+volumes:
+  db_dssh:
+
+networks:
+  net:
+
+services:
+  db_dssh:
+    image: postgres:16
+    volumes:
+      - db_dssh:/var/lib/postgresql/data
+    env_file:
+      - ./.env/.local
+    networks:
+      - net
+    expose:
+      - '5432'  
+  web:
+    build:
+      context: ../.
+      dockerfile: docker/Dockerfile
+    networks:
+      - net
+    command:  >
+      sh -c "
+        python manage.py makemigrations &&
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ../.:/web
+    env_file:
+      - ./.env/.local
+    ports:
+      - 8000:8000
+    depends_on:
+      - db_dssh

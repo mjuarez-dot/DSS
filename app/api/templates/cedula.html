@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html class="loading" lang="es" data-textdirection="ltr">
+<head>
+  <title>REPORTE DOCUMENTAL FINAL DEL DIAGNÓSTICO DE LOS PLANTELES DE EDUCACIÓN SECUNDARIA Y DE LOS PLANTELES DE LOS ORGANISMOS DESCENTRALIZADOS DE EDUCACIÓN MEDIA SUPERIOR Y EDUCACIÓN SUPERIOR DEL ESTADO DE HIDALGO</title>
+  <!-- END Page Level CSS-->
+  <style>
+    @page {
+      size: Letter;
+      margin: 0.5cm;
+    }
+    .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+			padding: 5px 15px !important;
+			font-size: 10px !important;
+		}
+    
+		li{font-size: 12px !important;}
+		small{font-size: 10px !important;}
+  </style>
+  <!-- Bootstrap 5-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body class="vertical-layout"
+data-open="click" data-menu="vertical-menu">
+  <!-- fixed-top-->
+
+  <div class="app-content content">
+    <div class="content-wrapper">
+
+      <div class="content-body">
+        <section>
+          <div>
+            <!-- DSSH Informe -->
+            <div class="row">
+              <div class="col-sm-6">
+                
+              </div>
+              <div class="col-sm-6">
+                <p class="h6 txt-info">REPORTE DOCUMENTAL FINAL DEL DIAGNÓSTICO DE LOS PLANTELES DE EDUCACIÓN SECUNDARIA Y DE LOS PLANTELES DE LOS ORGANISMOS DESCENTRALIZADOS DE EDUCACIÓN MEDIA SUPERIOR Y EDUCACIÓN SUPERIOR DEL ESTADO DE HIDALGO</p>
+              </div>
+              <hr>
+            </div>
+          <div class="col-sm-12" >
+            <!-- Stack the columns on mobile by making one full-width and the other half-width -->
+            <div class="row">
+              <p style="font-size: 9px;" class="align text-end" font-size: 10px;>REPORTE DOCUMENTAL FINAL DEL DIAGNÓSTICO DE LOS PLANTELES DE EDUCACIÓN SECUNDARIA <br>Y DE LOS PLANTELES DE LOS ORGANISMOS DESCENTRALIZADOS DE EDUCACIÓN MEDIA SUPERIOR <br>Y EDUCACIÓN SUPERIOR DEL ESTADO DE HIDALGO</p>
+              <hr size="7">
+              <p style="font-size: 10px;">INSTITUTO HISPANOAMERICANO DE ESTUDIOS SUPERIORES S.C.</p>
+              <p style="font-size: 10px; " class="align text-end">2.1 Resultados globales del Estado de Hidalgo <br><b style="font-size:16px;">Educación Secundaria</b></p>
+          </div>
+        </div>
+            <!--/ Invoice Customer Details -->
+            <!-- Invoice Items Details -->
+            <div id="invoice-items-details" class="pt-2">
+              <div class="row">
+                {%for subsystem in data%}
+                <div class="col-sm-6">
+                  <div class="card o-hidden border-0">
+                    <div class="bg-secundary b-r-4 card-body">
+                      <div class="media static-top-widget">
+                        <div class="align-self-center text-center"><i data-feather="home"></i></div>
+                        <div class="media-body">
+                          <h4>{{subsystem.subsystem_name}}</h4><i class="icon-bg" data-feather="home"></i>
+                          <p>Estado de Hidalgo</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <h6>Conductas de riesgo en estudiantes</h6>
+                <div class="table-responsive" style="overflow-x: hidden;">
+                  <table class="display table-striped table-border-horizontal">
+                    <thead>
+                      <tr>
+                        <th>Conducta de Riesgo</th>
+                        <th>Prevalencia</th>
+                        <th>Estudiantes</th>
+                        <th>Riesgo</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {%for factor in subsystem.data_students%}
+                      {%if not factor.factor in protector_factors%}
+                      <tr>
+                        <td>
+                          <b>{{factor.factor}}</b>
+                        </td>
+                        <td>
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{{factor.count}}</td>
+                        <td>{%if factor.prevalence == 0 %}
+                            Riesgo nulo
+                            {%elif factor.prevalence == 1 %}
+                            Riesgo bajo
+                            {%elif factor.prevalence == 2 %}
+                            Riesgo medio
+                            {%elif factor.prevalence == 3 %}
+                            Riesgo alto
+                            {%elif factor.prevalence == 4 %}
+                            Riesgo muy alto
+                            {%endif%}</td>
+                      </tr>
+                      <tr>
+                        <td colspan=4><small class="text-justify">{{factor.recomendation}}</small></td>
+                      </tr>
+                      {%endif%}
+                      {%endfor%}              
+                    </tbody>
+                  </table>
+                </div>
+                <h6>Factores protectores en estudiantes</h6>
+
+                <div class="table-responsive" style="overflow-x: hidden;">
+                  <table class="display table-striped table-border-horizontal">
+                    <thead>
+                      <tr>
+                        <th>Factor protector</th>
+                        <th>Prevalencia</th>
+                        <th>Estudiantes</th>
+                        <th>Presencia/Ausencia</th>
+                      </tr>
+                    </thead>
+                    <div>
+                    <tbody>
+                      {%for factor in subsystem.data_students%}
+                      {%if factor.factor in protector_factors%}
+                      <tr>
+                        <td>
+                          <b>{{factor.factor}}</b>
+                        </td>
+                        <td>
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar bg-primary" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{{factor.count}}</td>
+                        <td>{%if factor.prevalence == 0 %}
+                            Ausencia
+                            {%elif factor.prevalence == 1 %}
+                            Presencia
+                            {%endif%}</td>
+                      </tr>
+                      <tr>
+                        <td colspan=4><small class="text-justify">{{factor.recomendation}}</small></td>
+                      </tr>
+                      {%endif%}
+                      {%endfor%}              
+                    </tbody>
+                    </div>
+                  </table>
+                </div>
+                <h6>Conductas de riesgo en docentes</h6>
+                <div class="table-responsive" style="overflow-x: hidden;">
+                  <table class="display table-striped table-border-horizontal">
+                    <thead>
+                      <tr>
+                        <th>Conducta de Riesgo</th>
+                        <th>Prevalencia</th>
+                        <th>Docentes</th>
+                        <th>Riesgo</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {%for factor in subsystem.data_teachers%}
+                      {%if not factor.factor in protector_factors%}
+                      <tr>
+                        <td>
+                          <b>{{factor.factor}}</b>
+                        </td>
+                        <td>
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{{factor.count}}</td>
+                        <td>{%if factor.prevalence == 0 %}
+                            Riesgo nulo
+                            {%elif factor.prevalence == 1 %}
+                            Riesgo bajo
+                            {%elif factor.prevalence == 2 %}
+                            Riesgo medio
+                            {%elif factor.prevalence == 3 %}
+                            Riesgo alto
+                            {%elif factor.prevalence == 4 %}
+                            Riesgo muy alto
+                            {%endif%}</td>
+                      </tr>
+                      <tr>
+                        <td colspan=4><small class="text-justify">{{factor.recomendation}}</small></td>
+                      </tr>
+                      {%endif%}
+                      {%endfor%}              
+                    </tbody>
+                  </table>
+                </div>
+                <h6>Factores protectores en estudiantes</h6>
+
+                <div class="table-responsive" style="overflow-x: hidden;">
+                  <table class="display table-striped table-border-horizontal">
+                    <thead>
+                      <tr>
+                        <th>Factor protector</th>
+                        <th>Prevalencia</th>
+                        <th>Docentes</th>
+                        <th>Presencia/Ausencia</th>
+                      </tr>
+                    </thead>
+                    <div>
+                    <tbody>
+                      {%for factor in subsystem.data_teachers%}
+                      {%if factor.factor in protector_factors%}
+                      <tr>
+                        <td>
+                          <b>{{factor.factor}}</b>
+                        </td>
+                        <td>
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar bg-primary" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{{factor.count}}</td>
+                        <td>{%if factor.prevalence == 0 %}
+                            Ausencia
+                            {%elif factor.prevalence == 1 %}
+                            Presencia
+                            {%endif%}</td>
+                      </tr>
+                      <tr>
+                        <td colspan=4><small class="text-justify">{{factor.recomendation}}</small></td>
+                      </tr>
+                      {%endif%}
+                      {%endfor%}              
+                    </tbody>
+                    </div>
+                  </table>
+                </div>
+                {%endfor%}
+              </div>                       
+            </div>
+            <br>
+        </section>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

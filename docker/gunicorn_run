@@ -1,0 +1,34 @@
+#!/bin/bash
+
+NAME="dss"                                                    # Nombre de la app
+DJANGODIR=/web                                      # directorio del proyecto de Django
+SOCKFILE=/web/docker/dss.sock                        # Nos comunicaremos utilizando este unix socket
+USER=root                                                    # Correr con el usuario
+GROUP=root                                                   # Correr como el grupo 
+NUM_WORKERS=3                                                # Cuantos - worker processes - de Gunicorn 
+DJANGO_SETTINGS_MODULE=settings                               # Archivo settings de Django
+DJANGO_WSGI_MODULE=wsgi                                       # Archivo WSGI del proyecto
+GUNICORN_BIND_PORT="${GUNICORN_BIND_PORT:-8000}"
+
+echo "Starting $NAME as `whoami`"
+
+# Activando el entorno
+cd $DJANGODIR
+#source env/bin/activate
+export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+export PYTHONPATH=$DJANGODIR:$PYTHONPATH
+
+# Crear el directorio para correrlo en caso de no existir
+RUNDIR=$(dirname $SOCKFILE)
+test -d $RUNDIR || mkdir -p $RUNDIR
+
+# Iniciando Django Gunicorn
+exec gunicorn ${DJANGO_WSGI_MODULE}:application \
+  --name $NAME \
+  --workers $NUM_WORKERS \
+  --timeout=240 \
+  --user=$USER --group=$GROUP \
+  --bind=0.0.0.0:${GUNICORN_BIND_PORT} \
+  --log-level=debug #\   # Enable this if you want to use log file
+  # --log-level=error #\   # Enable this if you want to use log file
+  #--log-file=/app/ofda_sci/docker/logs/ofda_sci_gunicorn.log

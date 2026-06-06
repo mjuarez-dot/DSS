@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block profile %}
+  <div class="sidebar-user text-center">
+    <div class="avatar"> <img class="img-90 rounded-circle" src="{% static '/assets/images/dashboard/casa2.png'%}" alt="" data-intro="Centro de Trabajo"></div>
+    {%if is_admin%}
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{request.user.username}}</h6>
+      </a>
+    {%elif is_school%}
+      <div class="badge-bottom"><span  class="badge badge-primary" data-intro="Subsistema/Institución">{{school_emstype}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{school_cct}}</h6>
+      </a>
+      <p class="mb-0 font-roboto" data-intro="Nombre de la escuela">{{school_name}}</p>
+    {%elif is_subsystem%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Acronimo">{{subsystem_abrev}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{subsystem_name}}</h6>
+      </a>
+    {%elif is_muni%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Acronimo">{{muni_key}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{muni_name}}</h6>
+      </a>
+    {%elif system%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Acronimo">{{system_acronym}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{system_name}}</h6>
+      </a>
+    {%endif%}
+  </div>
+{% endblock%}
+{%block body%}
+<div class="container-fluid faq-section">
+
+            <div class="row">
+              <!--
+              <div class="col-12">
+                <div class="knowledgebase-bg"><img class="bg-img-cover bg-center" src="{% static '/assets/images/dssh-home.jpg'%}" alt="looginpage"></div>
+                <div class="knowledgebase-search">
+                  <div>
+                    <p class="h3" style="color: white">Diagnóstico de la Salud Social</p>
+                    <p class="h6" style="color: white">de los planteles de educación secundaria y de los organismos descentralizados</p>
+                    <p class="h6" style="color: white">de educación media superior y educación superior del Estado de Hidalgo</p>
+                     
+                    <form class="form-inline" action="#" method="get">
+                      <div class="form-group w-100 mb-0"><i data-feather="search"></i>
+                        <input class="form-control-plaintext w-100" type="text" placeholder="Ingresa tu búsqueda aquí" title="">
+                      </div>
+                    </form>
+                  
+                  </div>
+                </div>
+              </div>
+              -->
+              <div class="col-xl-12 col-lg-12 xl-100 box-col-12">
+                <div class="card bg-primary">
+                  <div class="card-body">
+                    <div class="media faq-widgets">
+                      <div class="media-body">
+                        <h5>Glosario</h5>
+                        <br>
+                        <h6>Salud Social</h6>
+                        <p>Se entiende por salud social de un conjunto de individuos, o de los lugares o establecimientos donde un conjunto de individuos desarrolla sus actividades cotidianas, a la resistencia y resiliencia a conductas de riesgo, que pueden ser sólo antisociales, o bien, delictivas, en razón de los valores y la normatividad de dichos lugares o establecimientos y los del contexto donde se ubican.</p>
+                        <h6>Rangos de Salud Social</h6>
+                        <p>0 - 200 = Ausencia de Salud Social</p>
+						<p>201 - 400 = Mala Salud Social</p>
+						<p>401 - 600 = Salud Social Aceptable</p>
+						<p>601 - 800 = Buena Salud Social</p>
+						<p>801 - 1000 = Excelente Salud Socia</p>
+
+                        <h6>¿Qué es un factor de riesgo?</h6>
+                        <p>Un Factor de Riesgo es cualquier característica o circunstancia detectable en una persona o grupo de personas que aumenta la probabilidad de estar expuesta a desarrollar o padecer un proceso mórbido, sus características se asocian a un cierto tipo de daño a la salud, ya sea física, mental o emocional.</p>
+
+                        <h6>¿Qué es un factor protector?</h6>
+                        <p>Un factor protector es qué que aumenta la probabilidad de que una persona desarrolle conductas que favorezcan un desarrollo saludable.</p>
+
+                        <h6>Ansiedad</h6>
+                        <p>Sentimientos de miedo, pavor e incomodidad que a veces se presentan como reacción a un estado de tensión o estrés. Una persona con ansiedad suda, se siente tensa y con desasosiego, además se le aceleran los latidos del corazón.</p>
+
+                        <h6>Control de impulsos</h6>
+                        <p>El Trastorno por Control de Impulsos es uno de los padecimientos que se caracterizan por la dificultad que tiene un individuo para controlar ciertas conductas, o auto-regular sus emociones, que a pesar de ser dañinas o con consecuencias graves, se continúan realizando.</p>
+
+                        <h6>Depresión</h6>
+                        <p>La depresión es un trastorno emocional que causa un sentimiento de tristeza constante y una pérdida de interés en realizar diferentes actividades. También denominada «trastorno depresivo mayor» o «depresión clínica», afecta los sentimientos, los pensamientos y el comportamiento de una persona, y puede causar una variedad de problemas físicos y emocionales. Es posible que tengas dificultades para realizar las actividades cotidianas y que, a veces, sientas que no vale la pena vivir.</p>
+
+                        <h6>Anhedonia</h6>
+                        <p>La anhedonia es la incapacidad para poder disfrutar de las actividades o situaciones que en el pasado sí resultaban placenteras. Por lo tanto, se trata de una falta de reactividad a los estímulos considerados como placenteros.</p>
+
+                        <h6>Ideación suicida</h6>
+                        <p>La ideación suicida son los pensamientos acerca de la voluntad de quitarse la vida, con o sin planificación o método. La amenaza suicida se considera la expresión verbal o no verbal, que manifiesta la posibilidad de una conducta suicida en un futuro próximo.</p>
+
+                        <h6>Conductas antisociales</h6>
+                        <p>El comportamiento antisocial es aquella conducta que un individuo realiza y que resulta ser contraria a los intereses o valores del conjunto de la sociedad. Estos comportamientos pueden ser muy variados: desde conductas que constituyen infracciones, evitar pagar el boleto de un transporte público, del cine, manejar sin licencia, meterse a una propiedad privada, etc. El comportamiento antisocial será diferente según la edad de la persona, su cultura y el contexto al que pertenezca.</p>
+
+                        <h6>Adicción a las redes sociales.</h6>
+                        <p>La adicción a las redes sociales se define como el uso incontrolado y continuo de espacios digitales como Instagram, TikTok, Discord, Twitter o Facebook. Una persona es adicta a las redes sociales cuando pierde el control de su uso y afecta su forma de relacionarse y su vida en general.</p>
+
+                        <h6>Consumo de drogas blandas.</h6>
+                        <p>Las drogas consideradas «blandas» son sustancias aceptadas socialmente, que son percibidas como menos perjudiciales y/o son legales (alcohol, tabaco y cannabis). Por lo que es un concepto social y no científico.</p>
+
+                        <h6>Consumo de drogas duras.</h6>
+                        <p>Las drogas consideradas «duras», en teoría, producen un mayor impacto social y sanitario, ya que la peligrosidad de su consumo a corto plazo es mayor (cocaína, heroína, lsd, krystal, anfetaminas).</p>
+
+                        <h6>Vandalismo.</h6>
+                        <p>El vandalismo se define como a la destrucción voluntaria, total o parcial, de la propiedad pública o privada. Incluye conceptos como el daño al patrimonio, el grafiti o actos provocación o de activismo que atentan contra cualquier tipo de patrimonio.</p>
+
+                        <h6>Delitos contra la propiedad.</h6>
+                        <p>A grandes rasgos, consiste en quitarle a una persona un bien sin tener derecho a hacerlo. Este delito tiene diversas variantes que consisten en los medios empleados para cometer el delito, el lugar en el que se comete el delito, la relación entre la víctima y el autor y el monto de lo robado (artículo 367 CPF).</p>
+
+                        <h6>Violencia</h6>
+                        <p>El uso intencional de la fuerza o el poder físico, de hecho o como amenaza, contra uno mismo, otra persona o un grupo o comunidad, que cause o tenga muchas probabilidades de causar lesiones, muerte, daños psicológicos, trastornos del desarrollo o privaciones, generalmente con la finalidad de obtener algo.</p>
+                      </div><i data-feather="file-text"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+{%endblock%}
+{%block styles%}{%endblock%}
+
+{% block script%}
+<script type="text/javascript">
+  $(document).ready(function(){
+    
+  });
+</script>
+{%endblock%}

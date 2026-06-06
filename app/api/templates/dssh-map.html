@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block profile %}
+  <div class="sidebar-user text-center">
+    <div class="avatar"> <img class="img-90 rounded-circle" src="{% static '/assets/images/dashboard/casa2.png'%}" alt="" data-intro="Centro de Trabajo"></div>
+    {%if is_admin%}
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{request.user.username}}</h6>
+      </a>
+    {%elif is_school%}
+      <div class="badge-bottom"><span  class="badge badge-primary" data-intro="Subsistema/Institucion">{{school_emstype}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{school_cct}}</h6>
+      </a>
+      <p class="mb-0 font-roboto" data-intro="Nombre de la escuela">{{school_name}}</p>
+    {%elif is_subsystem%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Acronimo">{{subsystem_abrev}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{subsystem_name}}</h6>
+      </a>
+    {%elif is_muni%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Acronimo">{{muni_key}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{muni_name}}</h6>
+      </a>
+    {%elif system%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Acronimo">{{system_acronym}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{system_name}}</h6>
+      </a>
+    {%elif is_state%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Entidad">{{state_name}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">Vista estatal</h6>
+      </a>
+      <p class="mb-0 font-roboto">Mapa municipal</p>
+    {%endif%}
+  </div>
+{% endblock%}
+
+{%block body%}
+<div class="container-fluid faq-section">
+  <div class="row align-items-center">
+    <div class="col-xl-1 col-md-2 col-3">
+      <label class="switch">
+        <input id="check_students" type="checkbox" checked="">
+        <span class="switch-state"></span>
+      </label>
+    </div>
+    <div class="col-xl-2 col-md-3 col-9">
+      <b><p id="chek_label" class="mb-0">Estudiantes</p></b>
+    </div>
+    <div class="col-xl-3 col-md-3 col-12 mb-2">
+      <select id="type_select" data-placeholder="Selecciona un nivel">
+        {% for level in map_levels %}
+        <option value="{{level.value}}">{{level.label}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-xl-3 col-md-4 col-12 mb-2">
+      <select id="subsystem_select" data-placeholder="Filtra por subsistema">
+        <option value="">Todos los subsistemas</option>
+        {% for subsystem in map_subsystems %}
+        <option value="{{subsystem.id}}">{{subsystem.abrev}} - {{subsystem.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-xl-3 col-12">
+      <div class="alert alert-light mb-2 py-2 px-3">
+        <strong id="filter_scope_label">Secundaria</strong><br>
+        <span class="text-muted" id="filter_subsystem_label">Todos los subsistemas</span>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="legend row">
+        <h6 class="text-center">Salud Social</h6>
+        <div class="col-2"><span style="background-color: #dddddd"></span>Sin Datos</div>
+        <div class="col-2"><span style="background-color: #d22d3d"></span>0-200</div>
+        <div class="col-2"><span style="background-color: #d2812d"></span>201-400</div>
+        <div class="col-2"><span style="background-color: #e2c636"></span>401-600</div>
+        <div class="col-2"><span style="background-color: #b8e236"></span>601-800</div>
+        <div class="col-2"><span style="background-color: #356924"></span>801-1000</div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div id="map" style="width:100%;height:560px;"></div>
+    </div>
+  </div>
+</div>
+{%endblock%}
+{%block styles%}
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js"></script>
+<style>
+  body { margin: 0; padding: 0; }
+  .legend {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 3px;
+    top: 560px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    font: 10px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    padding: 10px;
+    position: sticky;
+    right: 10px;
+    z-index: 1;
+  }
+
+  .legend h4 {
+    margin: 0 0 10px;
+  }
+
+  .legend div span {
+    border-radius: 50%;
+    display: inline-block;
+    height: 10px;
+    margin-right: 5px;
+    width: 10px;
+  }
+
+  #map .mapboxgl-popup-content {
+    min-width: 230px;
+  }
+
+  .map-stat-list {
+    margin: 0;
+    padding-left: 16px;
+  }
+</style>
+{%endblock%}
+
+{% block script%}
+{% if False %}<script type="text/javascript">{%endif%}
+  $(document).ready(function(){
+    const mapboxToken = "{{ MAPBOX_TOKEN|default:''|escapejs }}";
+    if (!mapboxToken) {
+      console.warn("MAPBOX_TOKEN not configured; the map may not render.");
+      $("#map").html('<div class="alert alert-warning m-3">El mapa no está configurado aún. Falta definir MAPBOX_TOKEN en el entorno.</div>');
+      return;
+    } else {
+      mapboxgl.accessToken = mapboxToken;
+    }
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/light-v10',
+      center: [-103.6, 20.75],
+      zoom: 6.7
+    });
+
+    function selectedLevelLabel() {
+      return $("#type_select option:selected").text();
+    }
+
+    function selectedSubsystemLabel() {
+      return $("#subsystem_select").val()
+        ? $("#subsystem_select option:selected").text()
+        : "Todos los subsistemas";
+    }
+
+    function updateFilterLabels() {
+      $("#filter_scope_label").text(selectedLevelLabel());
+      $("#filter_subsystem_label").text(selectedSubsystemLabel());
+    }
+
+    function popupMarkup(properties, isTeacher) {
+      const socialHealth = isTeacher ? properties.SH_te : properties.SH_st;
+      const respondents = isTeacher ? properties.respondents_te : properties.respondents_st;
+      const anxiety = isTeacher ? properties.anxiety_t : properties.anxiety;
+      const anhedonia = isTeacher ? properties.anhedonia_t : properties.anhedonia;
+      return `
+        <h6 class="mb-2">${properties.mun_name}</h6>
+        <ul class="map-stat-list">
+          <li><b>Salud social</b>: ${socialHealth}</li>
+          <li><b>Respondentes</b>: ${respondents}</li>
+          <li><b>Ansiedad</b>: ${anxiety}</li>
+          <li><b>Anhedonia</b>: ${anhedonia}</li>
+        </ul>
+      `;
+    }
+
+    function getMapUrl() {
+      const params = new URLSearchParams({
+        level: $("#type_select").val()
+      });
+      if ($("#subsystem_select").val()) {
+        params.set("subsystem_id", $("#subsystem_select").val());
+      }
+      return `/get_map_data?${params.toString()}`;
+    }
+
+    function loadSubsystems() {
+      const level = $("#type_select").val();
+      return $.getJSON(`/get_subsystem?level=${level}`, function(response) {
+        const select = $("#subsystem_select");
+        select.empty();
+        select.append(new Option("Todos los subsistemas", ""));
+        $.each(response.data, function(_, item) {
+          select.append(new Option(item.text, item.id));
+        });
+        select.val("");
+        select.trigger("change.select2");
+        updateFilterLabels();
+      });
+    }
+
+    function loadMapData() {
+      updateFilterLabels();
+      return $.getJSON(getMapUrl(), function(response) {
+        map.getSource('municipios').setData(response.data);
+      });
+    }
+
+    map.on('load', () => {
+      map.addSource('municipios', {
+        type: 'geojson',
+        data: {type: 'FeatureCollection', features: []}
+      });
+
+      map.addLayer({
+        id: 'health_student',
+        source: 'municipios',
+        type: 'fill',
+        paint: {
+          'fill-opacity': 0.75,
+          'fill-color': ['interpolate', ['linear'], ['get', 'SH_st'],
+            -1, '#dddddd',
+            0, '#d22d3d',
+            201, '#d22d3d',
+            401, '#d2812d',
+            601, '#e2c636',
+            801, '#b8e236',
+            1000, '#356924'
+          ]
+        }
+      }, 'waterway-label');
+
+      map.addLayer({
+        id: 'health_teacher',
+        source: 'municipios',
+        type: 'fill',
+        paint: {
+          'fill-opacity': 0.75,
+          'fill-color': ['interpolate', ['linear'], ['get', 'SH_te'],
+            -1, '#dddddd',
+            0, '#d22d3d',
+            201, '#d22d3d',
+            401, '#d2812d',
+            601, '#e2c636',
+            801, '#b8e236',
+            1000, '#356924'
+          ]
+        }
+      }, 'waterway-label');
+
+      map.addLayer({
+        id: 'municipios-border',
+        source: 'municipios',
+        type: 'line',
+        paint: {
+          'line-color': '#ffffff',
+          'line-width': 0.7
+        }
+      });
+
+      map.on('click', 'health_student', (e) => {
+        new mapboxgl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(popupMarkup(e.features[0].properties, false))
+          .addTo(map);
+      });
+
+      map.on('click', 'health_teacher', (e) => {
+        new mapboxgl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(popupMarkup(e.features[0].properties, true))
+          .addTo(map);
+      });
+
+      map.setLayoutProperty('health_teacher', 'visibility', 'none');
+
+      $("#check_students").change(function(){
+        const visibility = map.getLayoutProperty('health_teacher', 'visibility');
+        if(visibility === 'none'){
+          map.setLayoutProperty('health_student', 'visibility', 'none');
+          map.setLayoutProperty('health_teacher', 'visibility', 'visible');
+          $("#chek_label").text("Personal educativo");
+        }else{
+          map.setLayoutProperty('health_student', 'visibility', 'visible');
+          map.setLayoutProperty('health_teacher', 'visibility', 'none');
+          $("#chek_label").text("Estudiantes");
+        }
+      });
+
+      $("#type_select").select2();
+      $("#subsystem_select").select2();
+
+      $("#type_select").change(function(){
+        loadSubsystems().then(loadMapData);
+      });
+
+      $("#subsystem_select").change(function(){
+        loadMapData();
+      });
+
+      updateFilterLabels();
+      loadMapData();
+    });
+  });
+{%endblock%}

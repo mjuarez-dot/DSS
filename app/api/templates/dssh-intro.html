@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block profile %}
+  <div class="sidebar-user text-center">
+    <div class="avatar"> <img class="img-90 rounded-circle" src="{% static '/assets/images/dashboard/casa2.png'%}" alt="" data-intro="Centro de Trabajo"></div>
+    {%if is_admin%}
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{request.user.username}}</h6>
+      </a>
+    {%elif is_school%}
+      <div class="badge-bottom"><span  class="badge badge-primary" data-intro="Subsistema/Institución">{{school_emstype}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{school_cct}}</h6>
+      </a>
+      <p class="mb-0 font-roboto" data-intro="Nombre de la escuela">{{school_name}}</p>
+    {%elif is_subsystem%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Acronimo">{{subsystem_abrev}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{subsystem_name}}</h6>
+      </a>
+    {%elif is_muni%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Acronimo">{{muni_key}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{muni_name}}</h6>
+      </a>
+    {%elif system%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Acronimo">{{system_acronym}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{system_name}}</h6>
+      </a>
+    {%endif%}
+  </div>
+{% endblock%}
+{%block body%}
+<div class="container-fluid faq-section">
+            <div class="row">
+              <div class="col-12">
+                <div class="knowledgebase-bg"><img class="bg-img-cover bg-center" src="{% static '/assets/images/dssh-home.jpg'%}" alt="looginpage"></div>
+                <div class="knowledgebase-search">
+                  <div>
+                    <p class="h3" style="color: white">Diagnóstico de la Salud Social</p>
+                    <p class="h6" style="color: white">de los planteles de educación secundaria y de los organismos descentralizados</p>
+                    <p class="h6" style="color: white">de educación media superior y educación superior del Estado de Hidalgo</p>
+                    <!-- 
+                    <form class="form-inline" action="#" method="get">
+                      <div class="form-group w-100 mb-0"><i data-feather="search"></i>
+                        <input class="form-control-plaintext w-100" type="text" placeholder="Ingresa tu búsqueda aquí" title="">
+                      </div>
+                    </form>
+                  -->
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-12 col-lg-12 xl-100 box-col-12">
+                <div class="card bg-primary">
+                  <div class="card-body">
+                    <div class="media faq-widgets">
+                      <div class="media-body">
+                        <h5>Introducción</h5>
+                        <p>Este documento es parte del informe final del diagnóstico de la salud social de los planteles de educación secundaria y de los organismos descentralizados de educación media superior y educación superior del Estado de Hidalgo.</p>
+
+                        <p>El estudio consistió en pasar un auto-informe para poder conocer los factores de riesgo y protección que existen tanto en las instituciones educativas que formaron parte del estudio, como de su contexto inmediato, así como para conocer los hábitos y sentir de la comunidad educativa que formó parte de este proyecto.</p>
+
+                        <p>En el contenido encontrarás las prevalencias de las 13 categorías de conductas de riesgo, así como la presencia o ausencia de los factores de protección relacionados con el plantel, la familia y los personales.</p>
+
+                        <p>También podrás consultar las recomendaciones e interpretación que han dado los expertos en salud social sobre los resultados de tu plantel.</p>
+
+                        <p>Recuerda que la salud social es un compromiso de todos y para todos, por lo que este documento será un apoyo para la mejora o mantenimiento de la salud social del plantel, del municipio y del Estado de Hidalgo.</p>
+
+
+                      </div><i data-feather="file-text"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+{%endblock%}
+{%block styles%}{%endblock%}
+
+{% if False %}<script type="text/javascript"> {% endif %}
+{% block script%}
+  $(document).ready(function(){
+    
+  });
+{%endblock%}
+{% if False %}</script> {% endif %}

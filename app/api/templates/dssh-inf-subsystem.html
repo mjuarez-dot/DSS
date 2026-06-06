@@ -1,0 +1,999 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{%block body%}
+
+<div class="container-fluid">
+  <!-- Datos de Salud Social del Plantel -->
+  <div class="row">
+    <div data-intro="Permite realizar el cambio de resultados a observar entre Estudiantes/Docentes">
+        {%block bookmark%}
+          <label class="switch">
+            <input id="check_students" type="checkbox" {%if is_teachers%} checked="" {%endif%}>
+            <span class="switch-state {%if is_teachers%}bg-warning{%else%}bg-primary{%endif%}"></span>
+          </label>
+          <p id="chek_label">{%if is_teachers%}Docentes{%else%}Estudiantes{%endif%}</p>
+        {% endblock%}
+    </div>
+    <div class="col-sm-6">
+      <div class="card o-hidden border-0">
+        <div class="bg-secundary b-r-4 card-body">
+          <div class="media static-top-widget">
+            <div class="align-self-center text-center"><i data-feather="home"></i></div>
+            <div class="media-body"><span class="m-0">CCT: {{school_key}}</span>
+              <h4>{{school_name}}</h4><i class="icon-bg" data-feather="home"></i>
+              <h6>{{school_emstype}}</h6>
+              <p>Estado de Hidalgo</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card o-hidden border-0">
+        <div class="{%if is_teachers%}bg-warning{%else%}bg-primary{%endif%} b-r-4 card-body">
+          <div class="media static-top-widget">
+            <div class="align-self-center text-center"><i data-feather="thermometer"></i></div>
+            <div class="media-body"><span class="m-0">Salud Social</span>
+              <h4 class="mb-0 counter">{{social_health}}</h4><i class="icon-bg" data-feather="thermometer"></i>
+              <p>
+                {% if social_health < 200%}
+                Ausencia de salud social
+                {% elif social_health >= 200 and social_health < 400 %}
+                Mala de salud social
+                {% elif social_health >= 400 and social_health < 600 %}
+                Salud social Aceptable
+                {% elif social_health >= 600 and social_health < 800 %}
+                Buena de salud social
+                {% elif social_health >= 800 and social_health < 1000 %}
+                Excelente de salud social
+                {%endif%}              
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Datos Sociodemograficos -->
+  <div class="row">
+    <div class="header-faq">
+      <h4 class="mb-0">Datos Sociodemograficos</h4>
+    </div>
+    <div class="col-xl-4 col-md-6 box-col-6">
+      <div class="card custom-card">
+        <div class="text-center profile-details">
+          <h4>Genero</h4>
+          <h6>Datos Sociodemograficos</h6>
+        </div>
+        <div class="card-footer row">
+          <div class="col-4 col-sm-4">
+            <h6>{{gender_data.0.name}}</h6>
+            <h3 class="counter">{{gender_data.0.frequency}}</h3>
+          </div>
+          <div class="col-4 col-sm-4">
+            <h6>{{gender_data.1.name}}</h6>
+            <h3><span class="counter">{{gender_data.1.frequency}}</span></h3>
+          </div>
+          <div class="col-4 col-sm-4">
+            <h6>{{gender_data.2.name}}</h6>
+            <h3><span class="counter">{{gender_data.2.frequency}}</span></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-8 col-md-6 box-col-6">
+      <div class="card custom-card">
+        <div class="text-center profile-details">
+          <h4>Edad</h4>
+          <h6>Datos Sociodemograficos</h6>
+        </div>
+        <div class="card-footer row">
+          <div class="col-3 col-sm-3">
+            <h6>{{age_data.0.name}}</h6>
+            <h3 class="counter">{{age_data.0.frequency}}</h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{age_data.1.name}}</h6>
+            <h3><span class="counter">{{age_data.1.frequency}}</span></h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{age_data.2.name}}</h6>
+            <h3><span class="counter">{{age_data.2.frequency}}</span></h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{age_data.3.name}}</h6>
+            <h3><span class="counter">{{age_data.3.frequency}}</span></h3>
+          </div>
+          <div class="col-3 col-sm-3">
+            <h6>{{age_data.4.name}}</h6>
+            <h3><span class="counter">{{age_data.4.frequency}}</span></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-5 col-md-6 box-col-6">
+      <div class="card custom-card">
+        <div class="text-center profile-details">
+          <h4>Trabajo</h4>
+          <h6>Datos Sociodemograficos</h6>
+        </div>
+        <div class="card-footer row">
+          <div class="col-2 col-sm-2">
+            <h6>{{work_data.0.name}}</h6>
+            <h3 class="counter">{{work_data.0.frequency}}</h3>
+          </div>
+          <div class="col-3 col-sm-3">
+            <h6>{{work_data.1.name}}</h6>
+            <h3><span class="counter">{{work_data.1.frequency}}</span></h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{work_data.2.name}}</h6>
+            <h3><span class="counter">{{work_data.2.frequency}}</span></h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{work_data.3.name}}</h6>
+            <h3><span class="counter">{{work_data.3.frequency}}</span></h3>
+          </div>
+          <div class="col-3 col-sm-3">
+            <h6>{{work_data.4.name}}</h6>
+            <h3><span class="counter">{{work_data.4.frequency}}</span></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-7 col-md-6 box-col-6">
+      <div class="card custom-card">
+        <div class="text-center profile-details">
+          <h4>Población de Vivienda</h4>
+          <h6>Datos Sociodemograficos</h6>
+        </div>
+        <div class="card-footer row">
+          <div class="col-3 col-sm-3">
+            <h6>{{home_data.0.name}}</h6>
+            <h3 class="counter">{{home_data.0.frequency}}</h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{home_data.1.name}}</h6>
+            <h3><span class="counter">{{home_data.1.frequency}}</span></h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{home_data.2.name}}</h6>
+            <h3><span class="counter">{{home_data.2.frequency}}</span></h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{home_data.3.name}}</h6>
+            <h3><span class="counter">{{home_data.3.frequency}}</span></h3>
+          </div>
+          <div class="col-3 col-sm-3">
+            <h6>{{home_data.4.name}}</h6>
+            <h3><span class="counter">{{home_data.4.frequency}}</span></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="header-faq">
+      <h4 class="mb-0">Factores de Riesgo</h4>
+    </div>
+    <div class="col-xl-4 xl-100 box-col-4">
+      <div class="card ecommerce-widget pro-gress">
+        <div class="card-body support-ticket-font">
+          <div class="row">
+            {% with factor=data.0 %}
+            <div class="col-12 text-center">
+              <h1 class="f-w-700">{{factor.factor}}</h1>
+              <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+              <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%endif%}">
+                {%if factor.prevalence == 0 %}
+                Riesgo nulo
+                {%elif factor.prevalence == 1 %}
+                Riesgo bajo
+                {%elif factor.prevalence == 2 %}
+                Riesgo medio
+                {%elif factor.prevalence == 3 %}
+                Riesgo alto
+                {%endif%}
+              </p>
+            </div>
+            <div class="progress-showcase">
+              <div class="progress">
+                <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+              </div>
+              <br>
+              <div>
+                <h6>RECOMENDACIÓN</h6>
+                <p>{{factor.recomendation}}</p>
+              </div>
+            </div>
+            </div>
+            {%endwith%}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-4 xl-100 box-col-4">
+        <div class="card ecommerce-widget pro-gress">
+          <div class="card-body support-ticket-font">
+            <div class="row">
+              {% with factor=data.1 %}
+
+              <div class="col-12 text-center">
+                <h1 class="f-w-700">{{factor.factor}}</h1>
+                <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%endif%}">{%if factor.prevalence == 0 %}
+                Riesgo nulo
+                {%elif factor.prevalence == 1 %}
+                Riesgo bajo
+                {%elif factor.prevalence == 2 %}
+                Riesgo medio
+                {%elif factor.prevalence == 3 %}
+                Riesgo alto
+                {%elif factor.prevalence == 4 %}
+                Riesgo muy alto
+                {%endif%}</p>
+              </div>
+              <div class="progress-showcase">
+                <div class="progress">
+                  <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                </div>
+                <br>
+                <div>
+                  <h6>RECOMENDACIÓN</h6>
+                  <p>{{factor.recomendation}}</p>
+                </div>
+              </div>
+              </div>
+              {%endwith%}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 xl-100 box-col-4">
+          <div class="card ecommerce-widget pro-gress">
+            <div class="card-body support-ticket-font">
+              <div class="row">
+              {% with factor=data.2 %}
+
+                <div class="col-12 text-center">
+                  <h1 class="f-w-700">{{factor.factor}}</h1>
+                  <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                  <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%else%}txt-danger{%endif%}">
+                  {%if factor.prevalence == 0 %}
+                  Riesgo nulo
+                  {%elif factor.prevalence == 1 %}
+                  Riesgo bajo
+                  {%elif factor.prevalence == 2 %}
+                  Riesgo medio
+                  {%elif factor.prevalence == 3 %}
+                  Riesgo alto
+                  {%elif factor.prevalence == 4 %}
+                  Riesgo muy alto
+                  {%endif%}</p>
+                </div>
+                
+                <div class="progress-showcase">
+                  <div class="progress">
+                    <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%else%}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                  </div>
+                  <br>
+                  <div>
+                    <h6>RECOMENDACIÓN</h6>
+                    <p>{{factor.recomendation}}</p>
+                  </div>
+                </div>
+              </div>
+              {%endwith%}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 xl-100 box-col-4">
+          <div class="card ecommerce-widget pro-gress">
+            <div class="card-body support-ticket-font">
+              <div class="row">
+              {% with factor=data.3 %}
+                <div class="col-12 text-center">
+                  <h1 class="f-w-700">{{factor.factor}}</h1>
+                  <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                  <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%endif%}">
+                  {%if factor.prevalence == 0 %}
+                  Riesgo nulo
+                  {%elif factor.prevalence == 1 %}
+                  Riesgo bajo
+                  {%elif factor.prevalence == 2 %}
+                  Riesgo medio
+                  {%elif factor.prevalence == 3 %}
+                  Riesgo alto
+                  {%endif%}</p>
+                </div>
+                
+                <div class="progress-showcase">
+                  <div class="progress">
+                    <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                  </div>
+                  <br>
+                  <div>
+                    <h6>RECOMENDACIÓN</h6>
+                    <p>{{factor.recomendation}}</p>
+                  </div>
+                </div>
+              </div>
+              {%endwith%}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 xl-100 box-col-4">
+          <div class="card ecommerce-widget pro-gress">
+            <div class="card-body support-ticket-font">
+              <div class="row">
+              {% with factor=data.4 %}
+                <div class="col-12 text-center">
+                  <h1 class="f-w-700">{{factor.factor}}</h1>
+                  <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                  <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%endif%}">
+                  {%if factor.prevalence == 0 %}
+                  Riesgo nulo
+                  {%elif factor.prevalence == 1 %}
+                  Riesgo bajo
+                  {%elif factor.prevalence == 2 %}
+                  Riesgo medio
+                  {%elif factor.prevalence == 3 %}
+                  Riesgo alto
+                  {%endif%}</p>
+                </div>
+                
+                <div class="progress-showcase">
+                  <div class="progress">
+                    <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                  </div>
+                  <br>
+                  <div>
+                    <h6>RECOMENDACIÓN</h6>
+                    <p>{{factor.recomendation}}</p>
+                  </div>
+                </div>
+                </div>
+              {%endwith%}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4 xl-100 box-col-4">
+            <div class="card ecommerce-widget pro-gress">
+              <div class="card-body support-ticket-font">
+                <div class="row">
+                {% with factor=data.5 %}
+                  <div class="col-12 text-center">
+                    <h1 class="f-w-700">{{factor.factor}}</h1>
+                    <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                      <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%endif%}">
+                      {%if factor.prevalence == 0 %}
+                      Riesgo nulo
+                      {%elif factor.prevalence == 1 %}
+                      Riesgo bajo
+                      {%elif factor.prevalence == 2 %}
+                      Riesgo medio
+                      {%elif factor.prevalence == 3 %}
+                      Riesgo alto
+                      {%endif%}</p>
+                    </div>
+                    
+                    <div class="progress-showcase">
+                      <div class="progress">
+                        <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                      </div>
+                      <br>
+                      <div>
+                        <h6>RECOMENDACIÓN</h6>
+                        <p>{{factor.recomendation}}</p>
+                    </div>
+                  </div>
+                </div>
+              {%endwith%}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4 xl-100 box-col-4">
+          <div class="card ecommerce-widget pro-gress">
+            <div class="card-body support-ticket-font">
+              <div class="row">
+              {% with factor=data.6 %}
+                <div class="col-12 text-center">
+                  <h1 class="f-w-700">{{factor.factor}}</h1>
+                  <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                  <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%endif%}">
+                  {%if factor.prevalence == 0 %}
+                  Riesgo nulo
+                  {%elif factor.prevalence == 1 %}
+                  Riesgo bajo
+                  {%elif factor.prevalence == 2 %}
+                  Riesgo medio
+                  {%elif factor.prevalence == 3 %}
+                  Riesgo alto
+                  {%endif%}</p>
+                </div>
+                
+                <div class="progress-showcase">
+                  <div class="progress">
+                    <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                  </div>
+                  <br>
+                  <div>
+                    <h6>RECOMENDACIÓN</h6>
+                    <p>{{factor.recomendation}}</p>
+                  </div>
+                </div>
+              </div>
+              {%endwith%}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 xl-100 box-col-4">
+          <div class="card ecommerce-widget pro-gress">
+            <div class="card-body support-ticket-font">
+              <div class="row">
+              {% with factor=data.7 %}
+                <div class="col-12 text-center">
+                  <h1 class="f-w-700">{{factor.factor}}</h1>
+                  <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                  <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%endif%}">
+                  {%if factor.prevalence == 0 %}
+                  Riesgo nulo
+                  {%elif factor.prevalence == 1 %}
+                  Riesgo bajo
+                  {%elif factor.prevalence == 2 %}
+                  Riesgo medio
+                  {%elif factor.prevalence == 3 %}
+                  Riesgo alto
+                  {%endif%}</p>
+                </div>
+                
+                <div class="progress-showcase">
+                  <div class="progress">
+                    <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                  </div>
+                  <br>
+                  <div>
+                    <h6>RECOMENDACIÓN</h6>
+                    <p>{{factor.recomendation}}</p>
+                  </div>
+                </div>
+                </div>
+              {%endwith%}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4 xl-100 box-col-4">
+            <div class="card ecommerce-widget pro-gress">
+              <div class="card-body support-ticket-font">
+                <div class="row">
+                {% with factor=data.8 %}
+                  <div class="col-12 text-center">
+                    <h1 class="f-w-700">{{factor.factor}}</h1>
+                    <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                    <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%endif%}">
+                    {%if factor.prevalence == 0 %}
+                    Riesgo nulo
+                    {%elif factor.prevalence == 1 %}
+                    Riesgo bajo
+                    {%elif factor.prevalence == 2 %}
+                    Riesgo medio
+                    {%elif factor.prevalence == 3 %}
+                    Riesgo alto
+                    {%endif%}</p>
+                  </div>
+                  
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                    </div>
+                    <br>
+                    <div>
+                      <h6>RECOMENDACIÓN</h6>
+                      <p>{{factor.recomendation}}</p>
+                    </div>
+                  </div>
+                </div>
+              {%endwith%}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4 xl-100 box-col-4">
+            <div class="card ecommerce-widget pro-gress">
+              <div class="card-body support-ticket-font">
+                <div class="row">
+                {% with factor=data.9 %}
+                  <div class="col-12 text-center">
+                    <h1 class="f-w-700">{{factor.factor}}</h1>
+                    <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                    <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%endif%}">
+                    {%if factor.prevalence == 0 %}
+                    Riesgo nulo
+                    {%elif factor.prevalence == 1 %}
+                    Riesgo bajo
+                    {%elif factor.prevalence == 2 %}
+                    Riesgo medio
+                    {%elif factor.prevalence == 3 %}
+                    Riesgo alto
+                    {%endif%}</p>
+                  </div>
+                  
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                    </div>
+                    <br>
+                    <div>
+                      <h6>RECOMENDACIÓN</h6>
+                      <p>{{factor.recomendation}}</p>
+                    </div>
+                  </div>
+                </div>
+              {%endwith%}
+              </div>
+            </div>
+          </div>
+
+        <div class="col-xl-4 xl-100 box-col-4">
+          <div class="card ecommerce-widget pro-gress">
+            <div class="card-body support-ticket-font">
+              <div class="row">
+              {% with factor=data.10 %}
+                <div class="col-12 text-center">
+                  <h1 class="f-w-700">{{factor.factor}}</h1>
+                  <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                  <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%endif%}">
+                  {%if factor.prevalence == 0 %}
+                  Riesgo nulo
+                  {%elif factor.prevalence == 1 %}
+                  Riesgo bajo
+                  {%elif factor.prevalence == 2 %}
+                  Riesgo medio
+                  {%elif factor.prevalence == 3 %}
+                  Riesgo alto
+                  {%endif%}</p>
+                </div>
+                
+                <div class="progress-showcase">
+                  <div class="progress">
+                    <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                  </div>
+                  <br>
+                  <div>
+                    <h6>RECOMENDACIÓN</h6>
+                    <p>{{factor.recomendation}}</p>
+                  </div>
+                </div>
+                </div>
+              {%endwith%}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4 xl-100 box-col-4">
+            <div class="card ecommerce-widget pro-gress">
+              <div class="card-body support-ticket-font">
+                <div class="row">
+                {% with factor=data.11 %}
+                  <div class="col-12 text-center">
+                    <h1 class="f-w-700">{{factor.factor}}</h1>
+                    <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                  <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%endif%}">
+                  {%if factor.prevalence == 0 %}
+                  Riesgo nulo
+                  {%elif factor.prevalence == 1 %}
+                  Riesgo bajo
+                  {%elif factor.prevalence == 2 %}
+                  Riesgo medio
+                  {%elif factor.prevalence == 3 %}
+                  Riesgo alto
+                  {%endif%}</p>
+                </div>
+                
+                <div class="progress-showcase">
+                  <div class="progress">
+                    <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                  </div>
+                  <br>
+                  <div>
+                    <h6>RECOMENDACIÓN</h6>
+                    <p>{{factor.recomendation}}</p>
+                    </div>
+                  </div>
+                </div>
+              {%endwith%}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4 xl-100 box-col-4">
+            <div class="card ecommerce-widget pro-gress">
+              <div class="card-body support-ticket-font">
+                <div class="row">
+                {% with factor=data.12 %}
+                  <div class="col-12 text-center">
+                    <h1 class="f-w-700">{{factor.factor}}</h1>
+                    <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                    <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%endif%}">
+                    {%if factor.prevalence == 0 %}
+                    Riesgo nulo
+                    {%elif factor.prevalence == 1 %}
+                    Riesgo bajo
+                    {%elif factor.prevalence == 2 %}
+                    Riesgo medio
+                    {%elif factor.prevalence == 3 %}
+                    Riesgo alto
+                    {%endif%}</p>
+                  </div>
+                  
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                    </div>
+                    <br>
+                    <div>
+                      <h6>RECOMENDACIÓN</h6>
+                      <p>{{factor.recomendation}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {%endwith%}
+            </div>
+          </div>
+        </div>
+
+  <div class="row">
+    <div class="header-faq">
+      <h4 class="mb-0">Factores Protectores</h4>
+    </div>
+    <div class="col-xl-4 xl-100 box-col-4">
+      <div class="card ecommerce-widget pro-gress">
+        <div class="card-body support-ticket-font">
+          <div class="row">
+            {% with factor=data.13 %}
+            <div class="col-12 text-center">
+              <h1 class="f-w-700">{{factor.factor}}</h1>
+              <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                <p class="txt-primary">
+                {%if factor.prevalence == 0 %}
+                Ausencia
+                {%elif factor.prevalence == 1 %}
+                Presencia
+                {%endif%}</p>
+              </div>
+              
+              <div class="progress-showcase">
+                <div class="progress">
+                  <div class="progress-bar bg-primary" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                </div>
+                <br>
+                <div>
+                  <h6>RECOMENDACIÓN</h6>
+                  <p>{{factor.recomendation}}</p>
+                </div>
+              </div>
+            {%endwith%}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-4 xl-100 box-col-4">
+        <div class="card ecommerce-widget pro-gress">
+          <div class="card-body support-ticket-font">
+            <div class="row">
+            {% with factor=data.14 %}
+              <div class="col-12 text-center">
+                <h1 class="f-w-700">{{factor.factor}}</h1>
+                <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                <p class="txt-primary">
+                {%if factor.prevalence == 0 %}
+                Ausencia
+                {%elif factor.prevalence == 1 %}
+                Presencia
+                {%endif%}</p>
+              </div>
+              
+              <div class="progress-showcase">
+                <div class="progress">
+                  <div class="progress-bar bg-primary" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                </div>
+                <br>
+                <div>
+                  <h6>RECOMENDACIÓN</h6>
+                  <p>{{factor.recomendation}}</p>
+                  </div>
+                </div>
+              </div>
+            {%endwith%}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 xl-100 box-col-4">
+        <div class="card ecommerce-widget pro-gress">
+          <div class="card-body support-ticket-font">
+            <div class="row">
+            {% with factor=data.15 %}
+              <div class="col-12 text-center">
+                <h1 class="f-w-700">{{factor.factor}}</h1>
+                <h5 class="txt-secundary">Prevalencia: <span class="counter txt-info">{{factor.value}}</span> %</h5>
+                <p class="txt-primary">
+                {%if factor.prevalence == 0 %}
+                Ausencia
+                {%elif factor.prevalence == 1 %}
+                Presencia
+                {%endif%}</p>
+              </div>
+              
+              <div class="progress-showcase">
+                <div class="progress">
+                  <div class="progress-bar bg-primary" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                </div>
+                <br>
+                <div>
+                  <h6>RECOMENDACIÓN</h6>
+                  <p>{{factor.recomendation}}</p>
+                  </div>
+                </div>
+              </div>
+            {%endwith%}
+            </div>
+          </div>
+        </div>
+    
+    </div>
+
+        
+        <div class="table-responsive">
+          <table class="display" id="basic-6">
+            <thead>
+              <tr>
+                <th rowspan="2">Factor de Riesgo</th>
+                <th colspan="6">Cedula de Diagnóstico (Nivel)</th>
+              </tr>
+              <tr>
+                <th>Prevalencia</th>
+                <th>Riesgo</th>
+                <th>Recomendación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <b>Ansiedad</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+              
+              <tr>
+                <td>
+                  <b>Anhedonia</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <b>Depresión</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <b>Vandalismo</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <b>Infracciones Contra la propiedad</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <b>Drogas blandas</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <b>Drogas duras</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <b>Ideación suicida</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <b>Adicción a las redes sociales</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <b>Control de impulsos</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <b>Violencia</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <b>Acoso escolar</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <b>Conductas Antisociales</b>
+                </td>
+                <td>
+                  <div class="progress-showcase">
+                    <div class="progress">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">30%</div>
+                    </div>
+                  </div>
+                </td>
+                <td>Medio</td>
+                <td>Después de la pandemia es una tasa esperada, tomando en cuenta la edad y las inquietudes que viven con relación al futuro, aunque no es muy alta es significativa y requiere de campañas de prevención de la ansiedad a nivel general. </td>
+              </tr>
+
+              
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Factor de Riesgo</th>
+                <th>Prevalencia</th>
+                <th>Riesgo</th>
+                <th>Recomendaciones</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        
+</div>
+
+{%endblock%}
+{%block styles%}{%endblock%}
+
+{% block script%}
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#check_students").click(function(){
+      {%if is_teachers%}
+      window.location.replace('/report')
+      {%else%}
+      window.location.replace('/report/1')
+      {%endif%}
+    })
+  });
+</script>
+{%endblock%}

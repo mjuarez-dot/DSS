@@ -1,0 +1,1255 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block profile %}
+  <div class="sidebar-user text-center">
+    <div class="avatar"> <img class="img-90 rounded-circle" src="{% static '/assets/images/dashboard/casa2.png'%}" alt="" data-intro="Centro de Trabajo"></div>
+    {%if is_admin%}
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{request.user.username}}</h6>
+      </a>
+    {%elif is_school%}
+      <div class="badge-bottom"><span  class="badge badge-primary" data-intro="Subsistema/Institución">{{school_emstype}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{school_cct}}</h6>
+      </a>
+      <p class="mb-0 font-roboto" data-intro="Nombre de la escuela">{{school_name}}</p>
+    {%elif subsystem%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Acronimo">{{subsystem_abrev}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{subsystem_name}}</h6>
+      </a>
+    {%elif is_muni%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Acronimo">{{muni_key}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{muni_name}}</h6>
+      </a>
+    {%elif system%}
+      <div class="badge-bottom"><span class="badge badge-primary" data-intro="Acronimo">{{system_acronym}}</span></div>
+      <a href="#">
+        <h6 class="mt-3 f-14 f-w-600">{{system_name}}</h6>
+      </a>
+    {%endif%}
+  </div>
+{% endblock%}
+{%block body%}
+
+<div class="container-fluid">
+  <!-- Datos de Salud Social del Plantel -->
+  <div class="row">
+    <div data-intro="Permite realizar el cambio de resultados a observar entre Estudiantes/Personal educativo">
+        {%block bookmark%}
+          <div class="row">
+            <div class="col-sm-6">
+              
+              <label class="switch">
+                <input id="check_students" type="checkbox" {%if is_teachers%} checked="" {%endif%}>
+                <span class="switch-state {%if is_teachers%}bg-secondary{%else%}bg-primary{%endif%}"></span>
+              </label>
+              <p id="chek_label">{%if is_teachers%}Personal educativo{%else%}Estudiantes{%endif%}</p>
+            </div>
+            {%if is_muni%}
+            <div class="col-sm-6">
+              <select id="type_select" >
+                <option value="SEC" {%if level == 'SEC' %}selected="selected"{%endif%}>Secundaria</option>
+                <option value="EMS" {%if level == 'EMS' %}selected="selected"{%endif%}>Educación Media Superior</option>
+                <option value="ES" {%if level == 'ES' %}selected="selected"{%endif%}>Educación Superior</option>
+              </select>
+            </div>
+            {%endif%}
+            {%if request.user.userapp.subsystem%}
+            <div class="col-sm-6">
+              <select id="school_select" data-placeholder="Selecciona un plantel">
+              </select>
+              {%if school_id%}
+              <a class="btn btn-primary" href="/report"><i class="fa fa-arrow-left"></i> Ver Subsistema</a>
+              {%endif%}
+            </div>
+            {%endif%}
+          </div>
+        {% endblock%}
+    </div>
+    <div class="col-sm-6">
+      <div class="card o-hidden border-0">
+        <div class="bg-secundary b-r-4 card-body">
+          <div class="media static-top-widget">
+            <div class="align-self-center text-center"><i data-feather="home"></i></div>
+            {%if subsystem%}
+            <div class="media-body">
+              <h4>{{subsystem_name}}</h4><i class="icon-bg" data-feather="home"></i>
+              <h6>{{subsystem_abrev}}</h6>
+              <p>Estado de Hidalgo</p>
+            </div>
+            {%elif system%}
+            <div class="media-body">
+              <h4>{{system_name}}</h4><i class="icon-bg" data-feather="home"></i>
+              <p>Estado de Hidalgo</p>
+            </div>
+            {%elif is_muni%}
+            <div class="media-body">
+              <h4>{{muni_key}}</h4><i class="icon-bg" data-feather="home"></i>
+              <h6>{{muni_name}}</h6>
+              <p>Estado de Hidalgo</p>
+            </div>
+            {%else%}
+            <div class="media-body"><span class="m-0">CCT: {{school_key}}</span>
+              <h4>{{school_name}}</h4><i class="icon-bg" data-feather="home"></i>
+              <h6>{{school_emstype}}</h6>
+              <p>{{muni_name}} / Estado de Hidalgo</p>
+            </div>
+            {%endif%}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card o-hidden border-0">
+        <div class="{%if is_teachers%}bg-secondary{%else%}bg-primary{%endif%} b-r-4 card-body">
+          <div class="media static-top-widget">
+            <div class="align-self-center text-center"><i data-feather="thermometer"></i></div>
+            <div class="media-body"><span class="m-0">Salud Social</span>
+              <h4 class="mb-0 counter">{{social_health}}</h4><i class="icon-bg" data-feather="thermometer"></i>
+              <p>
+                {% if social_health < 200%}
+                Ausencia de salud social
+                {% elif social_health >= 200 and social_health < 400 %}
+                Mala salud social
+                {% elif social_health >= 400 and social_health < 600 %}
+                Salud social Aceptable
+                {% elif social_health >= 600 and social_health < 800 %}
+                Buena salud social
+                {% elif social_health >= 800 and social_health < 1000 %}
+                Excelente salud social
+                {%endif%}              
+              </p>
+              {%if is_school %}
+              <p>Eficiencia terminal: {{terminal_efficiency}}%</p>
+              <p>Reprobación: {{reprobation}}%</p>
+              {%endif%}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Datos Sociodemograficos -->
+  <div class="row">
+    <div class="header-faq">
+      <h4 class="mb-0">Datos Sociodemograficos</h4>
+    </div>
+    <div class="col-xl-4 col-md-6 box-col-6">
+      <div class="card custom-card">
+        <div class="text-center profile-details">
+          <h4>Genero</h4>
+          <h6>Datos Sociodemograficos</h6>
+        </div>
+        <div class="card-footer row">
+          {% if is_muni%}
+            <div class="col-4 col-sm-4">
+              <h6>{{data.0.gender_data.0.name}}</h6>
+              <h3 class="counter">{{data.0.gender_data.0.frequency}}</h3>
+            </div>
+            <div class="col-4 col-sm-4">
+              <h6>{{data.0.gender_data.1.name}}</h6>
+              <h3><span class="counter">{{data.0.gender_data.1.frequency}}</span></h3>
+            </div>
+            <div class="col-4 col-sm-4">
+              <h6>{{data.0.gender_data.2.name}}</h6>
+              <h3><span class="counter">{{data.0.gender_data.2.frequency}}</span></h3>
+            </div>
+          {%else%}
+            <div class="col-4 col-sm-4">
+              <h6>{{gender_data.0.name}}</h6>
+              <h3 class="counter">{{gender_data.0.frequency}}</h3>
+            </div>
+            <div class="col-4 col-sm-4">
+              <h6>{{gender_data.1.name}}</h6>
+              <h3><span class="counter">{{gender_data.1.frequency}}</span></h3>
+            </div>
+            <div class="col-4 col-sm-4">
+              <h6>{{gender_data.2.name}}</h6>
+              <h3><span class="counter">{{gender_data.2.frequency}}</span></h3>
+            </div>
+          {%endif%}
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-8 col-md-6 box-col-6">
+      <div class="card custom-card">
+        <div class="text-center profile-details">
+          <h4>Edad</h4>
+          <h6>Datos Sociodemograficos</h6>
+        </div>
+        <div class="card-footer row">
+          {% if is_muni%}
+          <div class="col-3 col-sm-3">
+            <h6>{{data.0.age_data.0.name}}</h6>
+            <h3 class="counter">{{data.0.age_data.0.frequency}}</h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{data.0.age_data.1.name}}</h6>
+            <h3><span class="counter">{{data.0.age_data.1.frequency}}</span></h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{data.0.age_data.2.name}}</h6>
+            <h3><span class="counter">{{data.0.age_data.2.frequency}}</span></h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{data.0.age_data.3.name}}</h6>
+            <h3><span class="counter">{{data.0.age_data.3.frequency}}</span></h3>
+          </div>
+          <div class="col-3 col-sm-3">
+            <h6>{{data.0.age_data.4.name}}</h6>
+            <h3><span class="counter">{{data.0.age_data.4.frequency}}</span></h3>
+          </div>
+          {%else%}
+            <div class="col-3 col-sm-3">
+              <h6>{{age_data.0.name}}</h6>
+              <h3 class="counter">{{age_data.0.frequency}}</h3>
+            </div>
+            <div class="col-2 col-sm-2">
+              <h6>{{age_data.1.name}}</h6>
+              <h3><span class="counter">{{age_data.1.frequency}}</span></h3>
+            </div>
+            <div class="col-2 col-sm-2">
+              <h6>{{age_data.2.name}}</h6>
+              <h3><span class="counter">{{age_data.2.frequency}}</span></h3>
+            </div>
+            <div class="col-2 col-sm-2">
+              <h6>{{age_data.3.name}}</h6>
+              <h3><span class="counter">{{age_data.3.frequency}}</span></h3>
+            </div>
+            <div class="col-3 col-sm-3">
+              <h6>{{age_data.4.name}}</h6>
+              <h3><span class="counter">{{age_data.4.frequency}}</span></h3>
+            </div>
+          {%endif%}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-5 col-md-6 box-col-6">
+      <div class="card custom-card">
+        <div class="text-center profile-details">
+          <h4>Trabajo</h4>
+          <h6>Datos Sociodemograficos</h6>
+        </div>
+        <div class="card-footer row">
+          {% if is_muni%}
+          <div class="col-2 col-sm-2">
+            <h6>{{data.0.work_data.0.name}}</h6>
+            <h3 class="counter">{{data.0.work_data.0.frequency}}</h3>
+          </div>
+          <div class="col-3 col-sm-3">
+            <h6>{{data.0.work_data.1.name}}</h6>
+            <h3><span class="counter">{{data.0.work_data.1.frequency}}</span></h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{data.0.work_data.2.name}}</h6>
+            <h3><span class="counter">{{data.0.work_data.2.frequency}}</span></h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{data.0.work_data.3.name}}</h6>
+            <h3><span class="counter">{{data.0.work_data.3.frequency}}</span></h3>
+          </div>
+          <div class="col-3 col-sm-3">
+            <h6>{{data.0.work_data.4.name}}</h6>
+            <h3><span class="counter">{{data.0.work_data.4.frequency}}</span></h3>
+          </div>
+          {%else%}
+            <div class="col-2 col-sm-2">
+              <h6>{{work_data.0.name}}</h6>
+              <h3 class="counter">{{work_data.0.frequency}}</h3>
+            </div>
+            <div class="col-3 col-sm-3">
+              <h6>{{work_data.1.name}}</h6>
+              <h3><span class="counter">{{work_data.1.frequency}}</span></h3>
+            </div>
+            <div class="col-2 col-sm-2">
+              <h6>{{work_data.2.name}}</h6>
+              <h3><span class="counter">{{work_data.2.frequency}}</span></h3>
+            </div>
+            <div class="col-2 col-sm-2">
+              <h6>{{work_data.3.name}}</h6>
+              <h3><span class="counter">{{work_data.3.frequency}}</span></h3>
+            </div>
+            <div class="col-3 col-sm-3">
+              <h6>{{work_data.4.name}}</h6>
+              <h3><span class="counter">{{work_data.4.frequency}}</span></h3>
+            </div>
+          {%endif%}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-7 col-md-6 box-col-6">
+      <div class="card custom-card">
+        <div class="text-center profile-details">
+          <h4>Población de Vivienda</h4>
+          <h6>Datos Sociodemograficos</h6>
+        </div>
+        <div class="card-footer row">
+          {% if is_muni%}
+          <div class="col-3 col-sm-3">
+            <h6>{{data.0.home_data.0.name}}</h6>
+            <h3 class="counter">{{data.0.home_data.0.frequency}}</h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{data.0.home_data.1.name}}</h6>
+            <h3><span class="counter">{{data.0.home_data.1.frequency}}</span></h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{data.0.home_data.2.name}}</h6>
+            <h3><span class="counter">{{data.0.home_data.2.frequency}}</span></h3>
+          </div>
+          <div class="col-2 col-sm-2">
+            <h6>{{data.0.home_data.3.name}}</h6>
+            <h3><span class="counter">{{data.0.home_data.3.frequency}}</span></h3>
+          </div>
+          <div class="col-3 col-sm-3">
+            <h6>{{data.0.home_data.4.name}}</h6>
+            <h3><span class="counter">{{data.0.home_data.4.frequency}}</span></h3>
+          </div>
+          {%else%}
+            <div class="col-3 col-sm-3">
+              <h6>{{home_data.0.name}}</h6>
+              <h3 class="counter">{{home_data.0.frequency}}</h3>
+            </div>
+            <div class="col-2 col-sm-2">
+              <h6>{{home_data.1.name}}</h6>
+              <h3><span class="counter">{{home_data.1.frequency}}</span></h3>
+            </div>
+            <div class="col-2 col-sm-2">
+              <h6>{{home_data.2.name}}</h6>
+              <h3><span class="counter">{{home_data.2.frequency}}</span></h3>
+            </div>
+            <div class="col-2 col-sm-2">
+              <h6>{{home_data.3.name}}</h6>
+              <h3><span class="counter">{{home_data.3.frequency}}</span></h3>
+            </div>
+            <div class="col-3 col-sm-3">
+              <h6>{{home_data.4.name}}</h6>
+              <h3><span class="counter">{{home_data.4.frequency}}</span></h3>
+            </div>
+          {%endif%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="header-faq">
+      <h4 class="mb-0">Conductas de Riesgo</h4>
+    </div>
+  </div>
+  <div class="row">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item"><a class="nav-link active" id="widget-tab" data-bs-toggle="tab" href="#widget" role="tab" aria-controls="widget-tab" aria-selected="true">Tarjetas</a></li>
+      <li class="nav-item"><a class="nav-link" id="table-tabs" data-bs-toggle="tab" href="#table" role="tab" aria-controls="table" aria-selected="false">Tabla conductas de riesgo</a></li>
+      <li class="nav-item"><a class="nav-link" id="protec-tabs" data-bs-toggle="tab" href="#protec" role="tab" aria-controls="protec" aria-selected="false">Tabla factores protectores</a></li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="widget" role="tabpanel" aria-labelledby="widget-tab">
+        <div class="row">
+          {%if is_muni%}
+            {%if is_teachers%}
+              {% for factor in data.0.data_teachers.DOC%}
+              {%if not factor.factor in protector_factors%}
+              <div class="col-xl-4 xl-100 box-col-4">
+                <div class="card ecommerce-widget pro-gress">
+                  <div class="card-body support-ticket-font">
+                    <div class="row">
+                      <div class="col-12 text-center">
+                        <h1 class="f-w-700">{{factor.factor}}</h1>
+                        <h5 class="txt-secundary">Prevalencia: <span class="prevalence-counter txt-info" data-value="{{factor.value}}">{{factor.value}}</span> %</h5>
+                        <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%elif factor.prevalence == 4 %}txt-danger{%endif%}">
+                          {%if factor.prevalence == 0 %}
+                          Riesgo nulo
+                          {%elif factor.prevalence == 1 %}
+                          Riesgo bajo
+                          {%elif factor.prevalence == 2 %}
+                          Riesgo medio
+                          {%elif factor.prevalence == 3 %}
+                          Riesgo alto
+                          {%endif%}
+                        </p>
+                      </div>
+                      <div class="progress-showcase">
+                        <div class="progress">
+                          <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                        </div>
+                        <br>
+                        <div>
+                          <h6>RECOMENDACIÓN</h6>
+                          <p>{{factor.recomendation}}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {%endif%}
+              {%endfor%}
+            {%else%}
+              {%if level == 'SEC'%}
+                {% for factor in data.0.data_students.SEC%}
+                {%if not factor.factor in protector_factors%}
+                  <div class="col-xl-4 xl-100 box-col-4">
+                    <div class="card ecommerce-widget pro-gress">
+                      <div class="card-body support-ticket-font">
+                        <div class="row">
+                          <div class="col-12 text-center">
+                            <h1 class="f-w-700">{{factor.factor}}</h1>
+                            <h5 class="txt-secundary">Prevalencia: <span class="prevalence-counter txt-info" data-value="{{factor.value}}">{{factor.value}}</span> %</h5>
+                            <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%elif factor.prevalence == 4 %}txt-danger{%endif%}">
+                              {%if factor.prevalence == 0 %}
+                              Riesgo nulo
+                              {%elif factor.prevalence == 1 %}
+                              Riesgo bajo
+                              {%elif factor.prevalence == 2 %}
+                              Riesgo medio
+                              {%elif factor.prevalence == 3 %}
+                              Riesgo alto
+                              {%elif factor.prevalence == 4 %}
+                              Riesgo muy alto
+                              {%endif%}
+                            </p>
+                          </div>
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                            <br>
+                            <div>
+                              <h6>RECOMENDACIÓN</h6>
+                              <p>{{factor.recomendation}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {%endif%}
+                {%endfor%}
+              {%elif level == 'EMS'%}
+                {% for factor in data.0.data_students.EMS%}
+                {%if not factor.factor in protector_factors%}
+                  <div class="col-xl-4 xl-100 box-col-4">
+                    <div class="card ecommerce-widget pro-gress">
+                      <div class="card-body support-ticket-font">
+                        <div class="row">
+                          <div class="col-12 text-center">
+                            <h1 class="f-w-700">{{factor.factor}}</h1>
+                            <h5 class="txt-secundary">Prevalencia: <span class="prevalence-counter txt-info" data-value="{{factor.value}}">{{factor.value}}</span> %</h5>
+                            <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%elif factor.prevalence == 4 %}txt-danger{%endif%}">
+                              {%if factor.prevalence == 0 %}
+                              Riesgo nulo
+                              {%elif factor.prevalence == 1 %}
+                              Riesgo bajo
+                              {%elif factor.prevalence == 2 %}
+                              Riesgo medio
+                              {%elif factor.prevalence == 3 %}
+                              Riesgo alto
+                              {%endif%}
+                            </p>
+                          </div>
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                            <br>
+                            <div>
+                              <h6>RECOMENDACIÓN</h6>
+                              <p>{{factor.recomendation}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {%endif%}
+                {%endfor%}
+              {%elif level == 'ES'%}
+                {% for factor in data.0.data_students.ES%}
+                {%if not factor.factor in protector_factors%}
+                  <div class="col-xl-4 xl-100 box-col-4">
+                    <div class="card ecommerce-widget pro-gress">
+                      <div class="card-body support-ticket-font">
+                        <div class="row">
+                          <div class="col-12 text-center">
+                            <h1 class="f-w-700">{{factor.factor}}</h1>
+                            <h5 class="txt-secundary">Prevalencia: <span class="prevalence-counter txt-info" data-value="{{factor.value}}">{{factor.value}}</span> %</h5>
+                            <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%elif factor.prevalence == 4 %}txt-danger{%endif%}">
+                              {%if factor.prevalence == 0 %}
+                              Riesgo nulo
+                              {%elif factor.prevalence == 1 %}
+                              Riesgo bajo
+                              {%elif factor.prevalence == 2 %}
+                              Riesgo medio
+                              {%elif factor.prevalence == 3 %}
+                              Riesgo alto
+                              {%endif%}
+                            </p>
+                          </div>
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                            <br>
+                            <div>
+                              <h6>RECOMENDACIÓN</h6>
+                              <p>{{factor.recomendation}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {%endif%}
+                {%endfor%}
+              {%endif%}
+            {%endif%}
+          {%else%}
+            {% for factor in data%}
+            {%if not factor.factor in protector_factors%}
+              <div class="col-xl-4 xl-100 box-col-4">
+                <div class="card ecommerce-widget pro-gress">
+                  <div class="card-body support-ticket-font">
+                    <div class="row">
+                      <div class="col-12 text-center">
+                        <h1 class="f-w-700">{{factor.factor}}</h1>
+                        <h5 class="txt-secundary">Prevalencia: <span class="prevalence-counter txt-info" data-value="{{factor.value}}">{{factor.value}}</span> %</h5>
+                        <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%elif factor.prevalence == 4 %}txt-danger{%endif%}">
+                          {%if factor.prevalence == 0 %}
+                          Riesgo nulo
+                          {%elif factor.prevalence == 1 %}
+                          Riesgo bajo
+                          {%elif factor.prevalence == 2 %}
+                          Riesgo medio
+                          {%elif factor.prevalence == 3 %}
+                          Riesgo alto
+                          {%endif%}
+                        </p>
+                      </div>
+                      <div class="progress-showcase">
+                        <div class="progress">
+                          <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                        </div>
+                        <br>
+                        <div>
+                          <h6>RECOMENDACIÓN</h6>
+                          <p>{{factor.recomendation}}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {%endif%}
+            {%endfor%}
+          {%endif%}
+        </div>
+        <div class="row">
+          <div class="header-faq">
+            <h4 class="mb-0">Factores Protectores</h4>
+          </div>
+          {%if is_muni%}
+            {%if is_teachers%}
+              {% for factor in data.0.data_teachers.DOC%}
+              {%if factor.factor in protector_factors%}
+                <div class="col-xl-4 xl-100 box-col-4">
+                  <div class="card ecommerce-widget pro-gress">
+                    <div class="card-body support-ticket-font">
+                      <div class="row">
+                        <div class="col-12 text-center">
+                          <h1 class="f-w-700">{{factor.factor}}</h1>
+                          <h5 class="txt-secundary">Prevalencia: <span class="prevalence-counter txt-info" data-value="{{factor.value}}">{{factor.value}}</span> %</h5>
+                          <p class="txt-primary">
+                          {%if factor.prevalence == 0 %}
+                          Ausencia
+                          {%elif factor.prevalence == 1 %}
+                          Presencia
+                          {%endif%}</p>
+                        </div>
+                        
+                        <div class="progress-showcase">
+                          <div class="progress">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                          </div>
+                          <br>
+                          <div>
+                            <h6>RECOMENDACIÓN</h6>
+                            <p>{{factor.recomendation}}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {%endif%}
+              {%endfor%}
+            {%else%}
+              {%if level == 'SEC'%}
+                {% for factor in data.0.data_students.SEC%}
+                {%if factor.factor in protector_factors%}
+                  <div class="col-xl-4 xl-100 box-col-4">
+                    <div class="card ecommerce-widget pro-gress">
+                      <div class="card-body support-ticket-font">
+                        <div class="row">
+                          <div class="col-12 text-center">
+                            <h1 class="f-w-700">{{factor.factor}}</h1>
+                            <h5 class="txt-secundary">Prevalencia: <span class="prevalence-counter txt-info" data-value="{{factor.value}}">{{factor.value}}</span> %</h5>
+                            <p class="txt-primary">
+                            {%if factor.prevalence == 0 %}
+                            Ausencia
+                            {%elif factor.prevalence == 1 %}
+                            Presencia
+                            {%endif%}</p>
+                          </div>
+                          
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar bg-primary" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                            <br>
+                            <div>
+                              <h6>RECOMENDACIÓN</h6>
+                              <p>{{factor.recomendation}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {%endif%}
+                {%endfor%}
+              {%elif level == 'EMS'%}
+                {% for factor in data.0.data_students.EMS%}
+                {%if factor.factor in protector_factors%}
+                  <div class="col-xl-4 xl-100 box-col-4">
+                    <div class="card ecommerce-widget pro-gress">
+                      <div class="card-body support-ticket-font">
+                        <div class="row">
+                          <div class="col-12 text-center">
+                            <h1 class="f-w-700">{{factor.factor}}</h1>
+                            <h5 class="txt-secundary">Prevalencia: <span class="prevalence-counter txt-info" data-value="{{factor.value}}">{{factor.value}}</span> %</h5>
+                            <p class="txt-primary">
+                            {%if factor.prevalence == 0 %}
+                            Ausencia
+                            {%elif factor.prevalence == 1 %}
+                            Presencia
+                            {%endif%}</p>
+                          </div>
+                          
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar bg-primary" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                            <br>
+                            <div>
+                              <h6>RECOMENDACIÓN</h6>
+                              <p>{{factor.recomendation}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {%endif%}
+                {%endfor%}
+              {%elif level == 'ES'%}
+                {% for factor in data.0.data_students.ES%}
+                {%if factor.factor in protector_factors%}
+                  <div class="col-xl-4 xl-100 box-col-4">
+                    <div class="card ecommerce-widget pro-gress">
+                      <div class="card-body support-ticket-font">
+                        <div class="row">
+                          <div class="col-12 text-center">
+                            <h1 class="f-w-700">{{factor.factor}}</h1>
+                            <h5 class="txt-secundary">Prevalencia: <span class="prevalence-counter txt-info" data-value="{{factor.value}}">{{factor.value}}</span> %</h5>
+                            <p class="txt-primary">
+                            {%if factor.prevalence == 0 %}
+                            Ausencia
+                            {%elif factor.prevalence == 1 %}
+                            Presencia
+                            {%endif%}</p>
+                          </div>
+                          
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar bg-primary" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                            <br>
+                            <div>
+                              <h6>RECOMENDACIÓN</h6>
+                              <p>{{factor.recomendation}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {%endif%}
+                {%endfor%}
+              {%endif%}
+            {%endif%}
+          {%else%}
+            {% for factor in data%}
+            {%if factor.factor in protector_factors%}
+              <div class="col-xl-4 xl-100 box-col-4">
+                <div class="card ecommerce-widget pro-gress">
+                  <div class="card-body support-ticket-font">
+                    <div class="row">
+                      <div class="col-12 text-center">
+                        <h1 class="f-w-700">{{factor.factor}}</h1>
+                        <h5 class="txt-secundary">Prevalencia: <span class="prevalence-counter txt-info" data-value="{{factor.value}}">{{factor.value}}</span> %</h5>
+                        <p class="{%if factor.prevalence == 0 %}txt-primary{%elif factor.prevalence == 1 %}txt-primary{%elif factor.prevalence == 2 %}txt-warning{%elif factor.prevalence == 3 %}txt-danger{%elif factor.prevalence == 4 %}txt-danger{%endif%}">
+                          {%if factor.prevalence == 0 %}
+                          Riesgo nulo
+                          {%elif factor.prevalence == 1 %}
+                          Riesgo bajo
+                          {%elif factor.prevalence == 2 %}
+                          Riesgo medio
+                          {%elif factor.prevalence == 3 %}
+                          Riesgo alto
+                          {%endif%}
+                        </p>
+                      </div>
+                      <div class="progress-showcase">
+                        <div class="progress">
+                          <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                        </div>
+                        <br>
+                        <div>
+                          <h6>RECOMENDACIÓN</h6>
+                          <p>{{factor.recomendation}}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {%endif%}
+            {%endfor%}
+          {%endif%}
+        </div>
+      </div>
+      <div class="tab-pane fade" id="table" role="tabpanel" aria-labelledby="table-tab">
+        <br>
+        <div class="table-responsive" style="overflow-x: hidden;">
+          <table class="display" id="datatable">
+            <thead>
+              <tr>
+                <th rowspan="2">Conducta de Riesgo</th>
+                <th colspan="6">Cedula de Diagnóstico (Nivel)</th>
+              </tr>
+              <tr>
+                <th>Prevalencia</th>
+                <th>{%if is_teachers%}Personal educativo{%else%}Estudiantes{%endif%}</th>
+                <th>Riesgo</th>
+              </tr>
+            </thead>
+            <tbody>
+            {%if is_muni%}
+              {%if is_teachers%}
+                {% for factor in data.0.data_teachers.DOC%}
+                {%if not factor.factor in protector_factors%}
+                  <tr>
+                    <td><b>{{factor.factor}}</b></td>
+                    <td>
+                      <div class="progress-showcase">
+                        <div class="progress">
+                          <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{factor.count}}</td>
+                    <td>{%if factor.prevalence == 0 %}
+                        Riesgo nulo
+                        {%elif factor.prevalence == 1 %}
+                        Riesgo bajo
+                        {%elif factor.prevalence == 2 %}
+                        Riesgo medio
+                        {%elif factor.prevalence == 3 %}
+                        Riesgo alto
+                        {%elif factor.prevalence == 4 %}
+                        Riesgo muy alto
+                        {%endif%}</td>
+                  </tr>
+                {%endif%}
+                {%endfor%}
+              {%else%}
+                {%if level == 'SEC'%}
+                  {% for factor in data.0.data_students.SEC%}
+                  {%if not factor.factor in protector_factors%}
+                    <tr>
+                      <td><b>{{factor.factor}}</b></td>
+                      <td>
+                        <div class="progress-showcase">
+                          <div class="progress">
+                            <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{{factor.count}}</td>
+                      <td>{%if factor.prevalence == 0 %}
+                          Riesgo nulo
+                          {%elif factor.prevalence == 1 %}
+                          Riesgo bajo
+                          {%elif factor.prevalence == 2 %}
+                          Riesgo medio
+                          {%elif factor.prevalence == 3 %}
+                          Riesgo alto
+                          {%elif factor.prevalence == 4 %}
+                          Riesgo muy alto
+                          {%endif%}</td>
+                    </tr>
+                  {%endif%}
+                  {%endfor%}
+                {%elif level == 'EMS'%}
+                  {% for factor in data.0.data_students.EMS%}
+                  {%if not factor.factor in protector_factors%}
+                    <tr>
+                      <td><b>{{factor.factor}}</b></td>
+                      <td>
+                        <div class="progress-showcase">
+                          <div class="progress">
+                            <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{{factor.count}}</td>
+                      <td>{%if factor.prevalence == 0 %}
+                          Riesgo nulo
+                          {%elif factor.prevalence == 1 %}
+                          Riesgo bajo
+                          {%elif factor.prevalence == 2 %}
+                          Riesgo medio
+                          {%elif factor.prevalence == 3 %}
+                          Riesgo alto
+                          {%elif factor.prevalence == 4 %}
+                          Riesgo muy alto
+                          {%endif%}</td>
+                    </tr>
+                  {%endif%}
+                  {%endfor%}
+                {%elif level == 'ES'%}
+                  {% for factor in data.0.data_students.ES%}
+                  {%if not factor.factor in protector_factors%}
+                    <tr>
+                      <td><b>{{factor.factor}}</b></td>
+                      <td>
+                        <div class="progress-showcase">
+                          <div class="progress">
+                            <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{{factor.count}}</td>
+                      <td>{%if factor.prevalence == 0 %}
+                          Riesgo nulo
+                          {%elif factor.prevalence == 1 %}
+                          Riesgo bajo
+                          {%elif factor.prevalence == 2 %}
+                          Riesgo medio
+                          {%elif factor.prevalence == 3 %}
+                          Riesgo alto
+                          {%elif factor.prevalence == 4 %}
+                          Riesgo muy alto
+                          {%endif%}</td>
+                    </tr>
+                  {%endif%}
+                  {%endfor%}
+                {%endif%}
+              {%endif%}
+            {%else%}
+              {% for factor in data%}
+              {%if not factor.factor in protector_factors%}
+                <tr>
+                  <td><b>{{factor.factor}}</b></td>
+                  <td>
+                    <div class="progress-showcase">
+                      <div class="progress">
+                        <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{{factor.count}}</td>
+                  <td>{%if factor.prevalence == 0 %}
+                      Riesgo nulo
+                      {%elif factor.prevalence == 1 %}
+                      Riesgo bajo
+                      {%elif factor.prevalence == 2 %}
+                      Riesgo medio
+                      {%elif factor.prevalence == 3 %}
+                      Riesgo alto
+                      {%elif factor.prevalence == 4 %}
+                      Riesgo muy alto
+                      {%endif%}</td>
+                </tr>
+              {%endif%}
+              {%endfor%}
+            {%endif%}
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Conducta de Riesgo</th>
+                <th>Prevalencia</th>
+                <th>{%if is_teachers%}Personal educativo{%else%}Estudiantes{%endif%}</th>
+                <th>Riesgo</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="protec" role="tabpanel" aria-labelledby="protec-tab">
+        <br>
+        <div class="table-responsive" style="overflow-x: hidden;">
+          <table class="display" id="datatable2">
+            <thead>
+              <tr>
+                <th rowspan="2">Factores protectores</th>
+                <th colspan="6">Cedula de Diagnóstico (Nivel)</th>
+              </tr>
+              <tr>
+                <th>Prevalencia</th>
+                <th>{%if is_teachers%}Personal educativo{%else%}Estudiantes{%endif%}</th>
+                <th>Presencia/Ausencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%if is_muni%}
+                {%if is_teachers%}
+                  {% for factor in data.0.data_teachers.DOC%}
+                  {%if not factor.factor in protector_factors%}
+                    <tr>
+                      <td><b>{{factor.factor}}</b></td>
+                      <td>
+                        <div class="progress-showcase">
+                          <div class="progress">
+                            <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{{factor.count}}</td>
+                      <td>{%if factor.prevalence == 0 %}
+                          Ausencia
+                          {%elif factor.prevalence == 1 %}
+                          Presencia
+                          {%endif%}</td>
+                    </tr>
+                  {%endif%}
+                  {%endfor%}
+                {%else%}
+                  {%if level == 'SEC'%}
+                    {% for factor in data.0.data_students.SEC%}
+                    {%if not factor.factor in protector_factors%}
+                      <tr>
+                        <td><b>{{factor.factor}}</b></td>
+                        <td>
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{{factor.count}}</td>
+                        <td>{%if factor.prevalence == 0 %}
+                            Ausencia
+                            {%elif factor.prevalence == 1 %}
+                            Presencia
+                            {%endif%}</td>
+                      </tr>
+                    {%endif%}
+                    {%endfor%}
+                  {%elif level == 'EMS'%}
+                    {% for factor in data.0.data_students.EMS%}
+                    {%if not factor.factor in protector_factors%}
+                      <tr>
+                        <td><b>{{factor.factor}}</b></td>
+                        <td>
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{{factor.count}}</td>
+                        <td>{%if factor.prevalence == 0 %}
+                            Ausencia
+                            {%elif factor.prevalence == 1 %}
+                            Presencia
+                            {%endif%}</td>
+                      </tr>
+                    {%endif%}
+                    {%endfor%}
+                  {%elif level == 'ES'%}
+                    {% for factor in data.0.data_students.ES%}
+                    {%if not factor.factor in protector_factors%}
+                      <tr>
+                        <td><b>{{factor.factor}}</b></td>
+                        <td>
+                          <div class="progress-showcase">
+                            <div class="progress">
+                              <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{{factor.count}}</td>
+                        <td>{%if factor.prevalence == 0 %}
+                            Ausencia
+                            {%elif factor.prevalence == 1 %}
+                            Presencia
+                            {%endif%}</td>
+                      </tr>
+                    {%endif%}
+                    {%endfor%}
+                  {%endif%}
+                {%endif%}
+              {%else%}
+                {% for factor in data%}
+                {%if factor.factor in protector_factors%}
+                  <tr>
+                    <td><b>{{factor.factor}}</b></td>
+                    <td>
+                      <div class="progress-showcase">
+                        <div class="progress">
+                          <div class="progress-bar {%if factor.prevalence == 0 %}bg-primary{%elif factor.prevalence == 1 %}bg-primary{%elif factor.prevalence == 2 %}bg-warning{%elif factor.prevalence == 3 %}bg-danger{%elif factor.prevalence == 4 %}bg-danger{%endif%}" role="progressbar" style="width: {{factor.value}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">{{factor.value}}%</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{factor.count}}</td>
+                    <td>{%if factor.prevalence == 0 %}
+                        Ausencia
+                        {%elif factor.prevalence == 1 %}
+                        Presencia
+                        {%endif%}</td>
+                    </tr>
+                {%endif%}
+                {%endfor%}
+              {%endif%}
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Conducta de Riesgo</th>
+                <th>Prevalencia</th>
+                <th>{%if is_teachers%}Personal educativo{%else%}Estudiantes{%endif%}</th>
+                <th>Presencia/Ausencia</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>        
+</div>
+
+{%endblock%}
+{%block styles%}
+<style>
+  body.dark-only #datatable,
+  body.dark-only #datatable2 {
+    color: #e6edf7;
+    border-color: #4b556f;
+  }
+
+  body.dark-only #datatable thead th,
+  body.dark-only #datatable2 thead th,
+  body.dark-only #datatable tfoot th,
+  body.dark-only #datatable2 tfoot th {
+    background-color: #1f2a3d;
+    color: #f8fafc;
+    border-color: #4b556f !important;
+  }
+
+  body.dark-only #datatable tbody tr,
+  body.dark-only #datatable2 tbody tr {
+    background-color: #243047 !important;
+  }
+
+  body.dark-only #datatable tbody tr:nth-child(even),
+  body.dark-only #datatable2 tbody tr:nth-child(even) {
+    background-color: #28354d !important;
+  }
+
+  body.dark-only #datatable tbody td,
+  body.dark-only #datatable2 tbody td {
+    color: #e6edf7 !important;
+    background-color: transparent !important;
+    border-color: #4b556f !important;
+  }
+
+  body.dark-only #datatable tbody td b,
+  body.dark-only #datatable2 tbody td b {
+    color: #f8fafc !important;
+  }
+
+  body.dark-only #datatable_wrapper .dataTables_info,
+  body.dark-only #datatable2_wrapper .dataTables_info,
+  body.dark-only #datatable_wrapper .dataTables_filter,
+  body.dark-only #datatable2_wrapper .dataTables_filter,
+  body.dark-only #datatable_wrapper .dataTables_paginate,
+  body.dark-only #datatable2_wrapper .dataTables_paginate,
+  body.dark-only #datatable_wrapper .dataTables_length,
+  body.dark-only #datatable2_wrapper .dataTables_length {
+    color: #cbd5e1 !important;
+  }
+
+  body.dark-only #datatable_wrapper .dataTables_filter input,
+  body.dark-only #datatable2_wrapper .dataTables_filter input {
+    color: #f8fafc;
+    background-color: #1f2a3d;
+    border: 1px solid #4b556f;
+  }
+
+  body.dark-only #datatable .sorting,
+  body.dark-only #datatable .sorting_asc,
+  body.dark-only #datatable .sorting_desc,
+  body.dark-only #datatable2 .sorting,
+  body.dark-only #datatable2 .sorting_asc,
+  body.dark-only #datatable2 .sorting_desc {
+    color: #f8fafc !important;
+  }
+</style>
+{%endblock%}
+{% if False %}<script type="text/javascript"> {% endif %}
+
+{% block script%}
+  $(document).ready(function(){
+    function animatePrevalenceCounters() {
+      $(".prevalence-counter").each(function() {
+        var $el = $(this);
+        var rawValue = String($el.data("value"));
+        var target = parseFloat(rawValue);
+        if (Number.isNaN(target)) {
+          return;
+        }
+        var decimals = (rawValue.split(".")[1] || "").length;
+        var duration = 1000;
+        var startTime = null;
+
+        function step(timestamp) {
+          if (!startTime) {
+            startTime = timestamp;
+          }
+          var progress = Math.min((timestamp - startTime) / duration, 1);
+          var current = target * progress;
+          $el.text(current.toFixed(decimals));
+          if (progress < 1) {
+            window.requestAnimationFrame(step);
+          } else {
+            $el.text(target.toFixed(decimals));
+          }
+        }
+
+        $el.text((0).toFixed(decimals));
+        window.requestAnimationFrame(step);
+      });
+    }
+
+    animatePrevalenceCounters();
+    {%if request.user.userapp.subsystem%}
+    var first=false
+    $.ajax({
+      url: "{% url 'get_schools'%}",
+      method: 'GET',
+      success: function(dic){
+        $("#school_select").prepend('<option></option>').select2({'data':dic.data});
+        $("#school_select").val('{{school_id}}').trigger('change');
+        first=true
+      }
+    });
+    {%endif%}
+    $("#school_select").change(function(){
+      if (first){
+        var school_id=$(this).val()
+        {%if is_teachers%}
+        if (school_id){
+          window.location.replace('/report/0?school='+school_id)
+        }else{
+          window.location.replace('/report/0')
+        }
+        {%else%}
+        if (school_id){
+          window.location.replace('/report/1?school='+school_id)
+        }else{
+          window.location.replace('/report/1')
+        }
+        {%endif%}
+      }
+    })
+    $("#type_select").select2();
+    $("#type_select").change(function(){
+      var val=$(this).val()
+      if (val=='SEC'){
+        {%if is_teachers%}
+          window.location.replace('/report/1/SEC')
+        {%else%}
+          window.location.replace('/report/0/SEC')
+        {%endif%}
+      }
+      else if (val=='EMS'){
+        {%if is_teachers%}
+          window.location.replace('/report/1/EMS')
+        {%else%}
+          window.location.replace('/report/0/EMS')
+        {%endif%}
+      }
+      else if (val=='ES'){
+        {%if is_teachers%}
+          window.location.replace('/report/1/ES')
+        {%else%}
+          window.location.replace('/report/0/ES')
+        {%endif%}
+      }
+    })
+    $("#datatable,#datatable2").DataTable({
+      "lengthChange": false,
+      "paging": false,
+      "pageLength": 15,
+      "oLanguage": {
+        "sProcessing": "Espere un momento, cargando datos ...",
+        "sLengthMenu": "Mostrar _MENU_ registros por página",
+        "sZeroRecords": "No se encontraron registros",
+        "sInfo": "Mostrando la página _PAGE_ de _PAGES_",
+        "sInfoEmpty": "No hay registros disponibles",
+        "sInfoFiltered": "(Filtrando de un total de _MAX_ registros)",
+        "oPaginate": {
+            "sNext": "Siguiente",
+            "sPrevious": "Anterior",
+            "sFirst": "Primero",
+            "sLast": "Último"
+        },
+        "sSearch": "Búsqueda" 
+      },
+    })
+    $("#check_students").click(function(){
+      console.log("{{is_teachers}}")
+      console.log("{{request.user.userapp.subsystem}}")
+      var school_id=$("#school_select").val()
+      {%if is_teachers%}
+        {%if request.user.userapp.subsystem%}
+          if (school_id){
+            window.location.replace('/report?school='+school_id)
+          }else{
+            window.location.replace('/report')
+          }
+        {%else%}
+          window.location.replace('/report')
+        {%endif%}
+        {%else%}
+        {%if request.user.userapp.subsystem%}
+          if (school_id){
+            window.location.replace('/report/1?school='+school_id)
+          }else{
+            window.location.replace('/report/1')
+          }
+        {%else%}
+          window.location.replace('/report/1')
+        {%endif%}
+      {%endif%}
+    })
+  });
+
+{%endblock%}
+{% if False %}</script> {% endif %}

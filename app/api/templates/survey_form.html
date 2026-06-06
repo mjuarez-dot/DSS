@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{%block body%}
+
+<div class="col-sm-12">
+    <div class="card">
+      <div class="card-header pb-0">
+        <h5>Subir resultados</h5>
+      </div>
+      <div class="card-body">
+        <form class="theme-form">
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label">Sube el archivo de excel en este campo</label>
+            <div class="col-sm-9">
+              <input class="form-control" id="id_import_file" type="file">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-primary" type="button" id='send_file'>Enviar</button>
+      </div>
+    </div>
+</div>
+
+{%endblock%}
+{%block styles%}{%endblock%}
+{%comment%}
+<script type="text/javascript">
+{%endcomment%}
+{% block script%}
+	$(document).ready(function(){
+		$("#send_file").click(function(){
+			var formData = new FormData();
+			formData.append('file', $('#id_import_file')[0].files[0]);
+			formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+			$.ajax({
+                url: "{% url 'import_answers'%}",
+                method: 'POST',
+                data : formData,
+                processData: false,
+                contentType: false,
+                success: function(data){
+                }
+            });
+        })
+	});
+{% comment %}
+</script>
+{% endcomment %}
+{%endblock%}
