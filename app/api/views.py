@@ -1413,29 +1413,26 @@ class LoginView(View):
 
     def post(self, request):
         msg = ""
-        print(request.POST)
         form = LoginForm(request.POST)
-        if form.is_valid():
-            print(form.cleaned_data)
-            us = form.cleaned_data["username"]
-            pw = form.cleaned_data["password"]
-            user = authenticate(username=us, password=pw)
-            if user is not None and user.is_active:
-                login(request, user)
-                ensure_userapp(user)
-                print("login succesful")
-                if "redirect" in request.POST:
-                    return HttpResponseRedirect(request.POST["redirect"])
-                else:
+        try:
+            if form.is_valid():
+                us = form.cleaned_data["username"]
+                pw = form.cleaned_data["password"]
+                user = authenticate(username=us, password=pw)
+                if user is not None and user.is_active:
+                    login(request, user)
+                    ensure_userapp(user)
+                    if "redirect" in request.POST:
+                        return HttpResponseRedirect(request.POST["redirect"])
                     return HttpResponseRedirect(reverse_lazy("intro"))
-            else:
                 messages.success(request, "Usuario y/o contraseña incorrecta")
-        else:
+            else:
+                form = LoginForm()
+        except Exception as exc:
+            print(f"LoginView.post error: {exc}")
             form = LoginForm()
-            print(form.errors)
-        ctx = {}
-        ctx["form"] = form
-        ctx["msg"] = msg
+            msg = "No fue posible iniciar sesión. Intenta de nuevo."
+        ctx = {"form": form, "msg": msg}
         return render(request, "login.html", ctx)
 
 
